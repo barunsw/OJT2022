@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="info" monitorInterval="5">
+    <Properties>
+        <Property name="LOG_FORMAT">%d{yyyy-MM-dd HH:mm:ss.SSS} [%5p] [%10t] %c(%L) %m%n</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_FORMAT}"/>
+        </Console>        
+    </Appenders>
+
+    <Loggers>
+    	<Logger name="com.barunsw.ojt" level="DEBUG" additivity="false">
+    		<AppenderRef ref="console"/>
+    	</Logger>
+
+        <Root level="DEBUG">
+            <AppenderRef ref="console"/>
+        </Root>
+    </Loggers>
+</Configuration>
