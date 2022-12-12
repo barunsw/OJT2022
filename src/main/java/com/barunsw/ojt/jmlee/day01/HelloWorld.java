@@ -8,6 +8,6 @@ public class HelloWorld {
 	
 	public static void main(String[] args) {
 		//System.out.println("Hello World");
-		LOGGER.debug("Hello World");
+		LOGGER.debug("Log Test");
 	}
 }
