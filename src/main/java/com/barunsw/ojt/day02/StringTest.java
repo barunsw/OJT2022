@@ -1,6 +1,9 @@
 package com.barunsw.ojt.day02;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,18 +15,6 @@ public class StringTest {
 	private static Logger LOGGER = LoggerFactory.getLogger(StringTest.class);
 	
 	public static void main(String[] args) {
-		Person p = new Person();
-		p.setName("배수현");
-		p.setAge(48);
-		p.setGender(Gender.MAN);
-		
-		Person p1 = new Person();
-		p1.setName("홍길동");
-		p1.setAge(48);
-		p1.setGender(Gender.MAN);
-		
-		LOGGER.debug(p.toString());
-		
 		String a = "Hello World";
 		String b = "Hello World";
 		String c = "hELLO wORLD";
@@ -57,7 +48,23 @@ public class StringTest {
 		LOGGER.debug(String.format("a=%s, b=%s, c=%s", a, b, c));
 		LOGGER.debug(String.format("f=%.3f", f));
 		
-/*		
+
+		Person p = new Person();
+		p.setName("배수현");
+		p.setAge(48);
+		p.setGender(Gender.MAN);
+		
+		LOGGER.debug(p.toString());
+
+		LOGGER.debug("p.hashCode:" + p.hashCode());
+		
+		Person p1 = new Person();
+		p1.setName("홍길동");
+		p1.setAge(48);
+		p1.setGender(Gender.MAN);
+
+		LOGGER.debug("p1.hashCode:" + p1.hashCode());
+		
 		Map<Person, Person> map = new HashMap<>();
 		map.put(p , p);
 		map.put(p1 , p1);
@@ -67,7 +74,6 @@ public class StringTest {
 			Object key = iter.next();
 			LOGGER.debug(String.format("[%s]:%s", key, map.get(key)));
 		}
-*/
 		
 		String t = "    \t\nHello World\n\n\n\nHello World\n\n\n\n";
 		

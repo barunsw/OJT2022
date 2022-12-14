@@ -32,10 +32,22 @@ public class Person {
 	public void setGender(Gender gender) {
 		this.gender = gender;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return age;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Person) {
+			Person anotherPerson = (Person)o;
+			return this.age == anotherPerson.age;
+		}
+		else {
+			return false;
+		}
+		
 	}
 
 	@Override
