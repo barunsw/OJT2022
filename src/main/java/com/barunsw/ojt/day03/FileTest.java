@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +21,8 @@ public class FileTest {
 		//File file = new File("C:\\Users\\sbae7\\git\\OJT2022\\data\\HelloWorld.txt");
 		//File file = new File("C:/Users/sbae7/git/OJT2022/data/HelloWorld.txt");
 		
-		LOGGER.debug("filePath:" + file.getAbsolutePath());
-		LOGGER.debug("exists:" + file.exists());
+		//LOGGER.debug("filePath:" + file.getAbsolutePath());
+		//LOGGER.debug("exists:" + file.exists());
 		
 		// Stream, Reader/Writer
 		/*
@@ -51,8 +53,8 @@ public class FileTest {
 		}
 		*/
 		
-		/*
-		Reader reader = null;
+		
+		/*Reader reader = null;
 		try {
 			reader = new FileReader(file);
 			
@@ -76,8 +78,8 @@ public class FileTest {
 					LOGGER.error(ioe.getMessage(), ioe);
 				}
 			}
-		}
-		*/
+		}*/
+		
 		
 		/*
 		List<String> repo = new ArrayList<>();
