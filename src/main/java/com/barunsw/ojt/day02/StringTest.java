@@ -65,7 +65,7 @@ public class StringTest {
 
 		LOGGER.debug("p1.hashCode:" + p1.hashCode());
 		
-		Map<Person, Person> map = new HashMap<>();
+		HashMap<Person, Person> map = new HashMap<>();
 		map.put(p , p);
 		map.put(p1 , p1);
 		

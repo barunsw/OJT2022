@@ -120,3 +120,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 /target/
+
+# 배수현
+*.dat
+*.txt
