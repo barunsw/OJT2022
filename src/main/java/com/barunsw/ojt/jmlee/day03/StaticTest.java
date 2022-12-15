@@ -23,6 +23,8 @@ public class StaticTest {
 		    LOGGER.debug("number2 : " + number2.num); //두번째 number의 클래스 필드 출력
 		    LOGGER.debug("number2 : " + number2.num2);//두번째 number의 인스턴스 필드 출력
 		    
+		    
+		    
 	}
 
 }
