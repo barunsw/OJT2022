@@ -95,7 +95,9 @@ public class FileAddressBookImpl implements AddressBookInterface {
 	@Override
 	public int updateAddressBook(AddressBookVo paramData) throws Exception {
 		// 동일한 seqNum의 주소 정보를 addressBookList에 찾아 해당 index의 데이터를 치환한다.
-		addressBookList.set(paramData.getSeqNum()-1, paramData);
+		LOGGER.debug(paramData.getSeqNum()-1+" ");
+		LOGGER.debug(addressBookList.indexOf(paramData)+" ");
+		addressBookList.set(addressBookList.indexOf(paramData), paramData);
 		LOGGER.debug(paramData.getName() + " 님의 정보수정 완료");
 		saveAddressBook();
 		return 0;
@@ -104,8 +106,7 @@ public class FileAddressBookImpl implements AddressBookInterface {
 	@Override
 	public int deleteAddressBook(AddressBookVo paramData) throws Exception {
 		// 동일한 seqNum의 주소 정보를 addressBookList에 찾아 해당 index의 데이터를 삭제한다.
-
-		addressBookList.remove(paramData.getSeqNum()-1);
+		addressBookList.remove(addressBookList.indexOf(paramData));
 		LOGGER.debug(paramData.getName() + " 님의 정보삭제 완료");
 		saveAddressBook();
 		return 0;
