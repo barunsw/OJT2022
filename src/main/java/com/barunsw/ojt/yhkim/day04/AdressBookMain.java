@@ -33,25 +33,25 @@ public class AdressBookMain {
 				LOGGER.debug(oneAddressBook.toString());
 			}
 			
-			// 회원 생일 수정
-			addressBookVo.setBirthday("2020-12-12");
-			// 수정한 정보 파일 저장
-			addressBook.updateAddressBook(addressBookVo);
-			
-			for (AddressBookVo oneAddressBook : addressBookList) {
-				LOGGER.debug(oneAddressBook.toString());
-			}
-			
-			// 회원 삭제
-			addressBook.deleteAddressBook(addressBookVo);
-			
-			for (AddressBookVo oneAddressBook : addressBookList) {
-				LOGGER.debug(oneAddressBook.toString());
-			}
-			
-			LOGGER.debug("NEXT SEQ_NUM : " + (AddressBookVo.generateSeqNum()));
-			
-			addressBook.selectAddressBook(new AddressBookVo());
+//			// 회원 생일 수정
+//			addressBookVo.setBirthday("2020-12-12");
+//			// 수정한 정보 파일 저장
+//			addressBook.updateAddressBook(addressBookVo);
+//			
+//			for (AddressBookVo oneAddressBook : addressBookList) {
+//				LOGGER.debug(oneAddressBook.toString());
+//			}
+//			
+//			// 회원 삭제
+//			addressBook.deleteAddressBook(addressBookVo);
+//			
+//			for (AddressBookVo oneAddressBook : addressBookList) {
+//				LOGGER.debug(oneAddressBook.toString());
+//			}
+//			
+//			LOGGER.debug("NEXT SEQ_NUM : " + (AddressBookVo.generateSeqNum()));
+//			
+//			addressBook.selectAddressBook(new AddressBookVo());
 			
 		}
 		catch (Exception ex) {
