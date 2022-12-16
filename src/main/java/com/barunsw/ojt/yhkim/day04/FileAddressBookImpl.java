@@ -43,7 +43,8 @@ public class FileAddressBookImpl implements AddressBookInterface {
 		// AddressBookVo의 SEQ_NUM를 가장 큰 seqNum + 1로 reset한다.
 
 		try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(FILE_PATH))) {
-			Object o = null;
+			Object o = null;	
+			
 			
 			while ((o = inputStream.readObject()) != null) {
 				if (o instanceof AddressBookVo) {
@@ -56,16 +57,18 @@ public class FileAddressBookImpl implements AddressBookInterface {
 		catch (EOFException eofe) {}
 		catch (Exception ex) {
 			LOGGER.error(ex.getMessage(), ex);
-		}		
+		}	
+		
+		if (addressBookList.size() > 0) {
+			AddressBookVo.resetSeqNum(addressBookList.get(addressBookList.size()-1).getSeqNum()+1);			
+		}
 	}
 	
 	private void saveAddressBook() {
 		// addressBookList의 데이터를 파일에 저장한다.(ObjectOutputStream)
-		AddressBookVo.resetSeqNum(1);
 		
 		try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(FILE_PATH))) {
 			for (AddressBookVo oneAddressBook : addressBookList) {
-				oneAddressBook.setSeqNum(AddressBookVo.generateSeqNum());
 				outputStream.writeObject(oneAddressBook);
 			}
 		}
@@ -100,7 +103,10 @@ public class FileAddressBookImpl implements AddressBookInterface {
 	@Override
 	public int updateAddressBook(AddressBookVo paramData) throws Exception {
 		// 동일한 seqNum의 주소 정보를 addressBookList에 찾아 해당 index의 데이터를 치환한다.
-		addressBookList.set(paramData.getSeqNum()-1, paramData);
+		LOGGER.debug(paramData.getSeqNum()-1+" ");
+		
+		LOGGER.debug(addressBookList.indexOf(paramData)+" ");
+		addressBookList.set(addressBookList.indexOf(paramData), paramData);
 	    LOGGER.debug(paramData.getName()+"님의 정보를 수정했습니다");
 
 		saveAddressBook();
@@ -111,7 +117,7 @@ public class FileAddressBookImpl implements AddressBookInterface {
 	@Override
 	public int deleteAddressBook(AddressBookVo paramData) throws Exception {
 		// 동일한 seqNum의 주소 정보를 addressBookList에 찾아 해당 index의 데이터를 삭제한다.
-		addressBookList.remove(paramData.getSeqNum()-1);
+		addressBookList.remove(addressBookList.indexOf(paramData));
 	    LOGGER.debug(paramData.getName()+"님의 정보를 삭제했습니다");
 		
 		saveAddressBook();
