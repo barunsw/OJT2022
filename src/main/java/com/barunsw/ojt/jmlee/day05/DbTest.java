@@ -16,16 +16,19 @@ public class DbTest {
 		FileAddressBookImpl addressBook = new FileAddressBookImpl();
 		
 		addressBook.selectAddressBookVos(null);		
-//		AddressBookVo paramVo = new AddressBookVo();
+		AddressBookVo paramVo = new AddressBookVo();
 		
-//		paramVo.setName("이재민");
-//		paramVo.setGender(Gender.MAN);
-//		paramVo.setBirthday("1995");
 //		paramVo.setPhoneNumber("1234");
 //		paramVo.setAddress("서울");
+		paramVo.setSeqNum(2);
 //		
 //		addressBook.insertAddressBook(paramVo);
-//		addressBook.selectAddressBookVos(null);		
+//		addressBook.updateaAddressBook(paramVo);		
+//		LOGGER.debug("====UPDATE====");
+		LOGGER.debug("====DELETE====");
+		addressBook.deleteAddressBook(paramVo);
+		addressBook.selectAddressBookVos(null);
+		
 
 	}
 
