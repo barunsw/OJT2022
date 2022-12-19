@@ -20,13 +20,10 @@ public class FileAddressBookImpl implements AddressBookInterface {
 
 	private static Logger LOGGER = LoggerFactory.getLogger(FileAddressBookImpl.class);
 	
-	private static String FILE_PATH = ""; // static으로 filepath를 지정해줘서 메모리를 아낄수있게함 
-	
-	private void resetPath(String filePath) {
-		FILE_PATH = filePath;
-	}
+	private String filePath = ""; // static으로 filepath를 지정해줘서 메모리를 아낄수있게함 
 	
 	public FileAddressBookImpl(String filePath) throws Exception {
+		this.filePath = filePath;
 		
 		File file = new File(filePath); // 파일이 존재하지 않으면 새로 생성 후 진행
 		boolean isExists = file.exists();
@@ -35,14 +32,14 @@ public class FileAddressBookImpl implements AddressBookInterface {
 			file.createNewFile();
 		}
 		
-		resetPath(filePath);
 		loadAddressBook();
 	}
 
 	private void loadAddressBook() {
 		// 파일로부터 Address 정보를 가져와서 addressBookList에 담는다.(ObjectInputStream)
 		// AddressBookVo의 SEQ_NUM를 가장 큰 seqNum + 1로 reset한다.
-		try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(FILE_PATH ))) {
+		int lastSeqNum = 0;
+		try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(filePath ))) {
 			Object o = null;
 			while ((o = inputStream.readObject()) != null) {
 				if(o instanceof AddressBookVo) {
@@ -63,7 +60,7 @@ public class FileAddressBookImpl implements AddressBookInterface {
 		// addressBookList의 데이터를 파일에 저장한다.(ObjectOutputStream)
 		AddressBookVo.resetSeqNum(1);
 		
-		try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(FILE_PATH))) {
+		try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(filePath))) {
 			for (AddressBookVo addressBook : addressBookList) {
 				addressBook.setSeqNum(AddressBookVo.generateSeqNum());
 				outputStream.writeObject(addressBook);
