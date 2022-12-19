@@ -1,4 +1,4 @@
-package com.barunsw.ojt.jmlee.day05;
+package com.barunsw.ojt.jmlee.day06;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,16 +18,20 @@ public class DbTest {
 		addressBook.selectAddressBookVos(null);		
 		AddressBookVo paramVo = new AddressBookVo();
 		
-//		paramVo.setPhoneNumber("1234");
-//		paramVo.setAddress("서울");
-//		paramVo.setSeqNum(2);
+		paramVo.setSeqNum(2);
+		paramVo.setAddress("대전");
+		paramVo.setGender(Gender.WOMAN);
+//		paramVo.setSeqNum(3);
+//		paramVo.setName("홍길동");
+//		paramVo.setPhoneNumber("9509");
+//		paramVo.setAddress("인천");
 //		
 //		addressBook.insertAddressBook(paramVo);
-//		addressBook.updateaAddressBook(paramVo);		
-//		LOGGER.debug("====UPDATE====");
+		LOGGER.debug("====UPDATE====");
+		addressBook.updateaAddressBook(paramVo);		
 //		LOGGER.debug("====DELETE====");
 //		addressBook.deleteAddressBook(paramVo);
-//		addressBook.selectAddressBookVos(null);
+		addressBook.selectAddressBookVos(null);
 		
 
 	}

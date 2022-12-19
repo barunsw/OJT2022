@@ -29,7 +29,11 @@ public class FileAddressBookImpl implements AddressBookInterface {
 		boolean isExists = file.exists();
 		
 		if (!isExists) {
+			LOGGER.debug("파일생성");
 			file.createNewFile();
+		}
+		else {
+			LOGGER.debug("파일있음" );
 		}
 		
 		loadAddressBook();
@@ -39,35 +43,45 @@ public class FileAddressBookImpl implements AddressBookInterface {
 		// 파일로부터 Address 정보를 가져와서 addressBookList에 담는다.(ObjectInputStream)
 		// AddressBookVo의 SEQ_NUM를 가장 큰 seqNum + 1로 reset한다.
 		int lastSeqNum = 0;
-		try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(filePath ))) {
+		System.out.println(new File(filePath).getAbsolutePath());
+		try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(filePath))) {
 			Object o = null;
 			while ((o = inputStream.readObject()) != null) {
 				if(o instanceof AddressBookVo) {
 				AddressBookVo addressBook = (AddressBookVo)o;
+//				addressBook.setSeqNum(addressBookList.size()+1);
 				addressBookList.add(addressBook);
 				}
 			}
-			
+
 		}
-		catch (EOFException eof) {}
+		catch (EOFException eofe) {}
 		catch (Exception ex) {
 			LOGGER.error(ex.getMessage(),ex);
 		}
+		lastSeqNum = addressBookList.size();
+		LOGGER.debug("lastSeqNum : " + lastSeqNum);
 	
 	}
 	
 	private void saveAddressBook() throws Exception {
 		// addressBookList의 데이터를 파일에 저장한다.(ObjectOutputStream)
-		AddressBookVo.resetSeqNum(1);
 		
 		try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(filePath))) {
+			System.out.println("addressBookList:" + addressBookList.size());
+			int seq = 1;
 			for (AddressBookVo addressBook : addressBookList) {
-				addressBook.setSeqNum(AddressBookVo.generateSeqNum());
+				addressBook.setSeqNum(seq);
 				outputStream.writeObject(addressBook);
+				seq++;
 			}
+			
 		}
 		catch (Exception ex) {
 			LOGGER.error(ex.getMessage(),ex);
+		} 
+		finally {
+			System.out.println("addressBookList-size:"+addressBookList.size());
 		}
 	}
 	
@@ -82,6 +96,7 @@ public class FileAddressBookImpl implements AddressBookInterface {
 	@Override
 	public int insertAddressBook(AddressBookVo paramData) throws Exception {
 		// TODO Auto-generated method stub
+		LOGGER.debug(paramData.getSeqNum()+"");
 		addressBookList.add(paramData);
 		LOGGER.debug(paramData.getName()+" 정보등록 완료");
 		saveAddressBook();
@@ -92,9 +107,15 @@ public class FileAddressBookImpl implements AddressBookInterface {
 	@Override
 	public int updateAddressBook(AddressBookVo paramData) throws Exception {
 		// 동일한 seqNum의 주소 정보를 addressBookList에 찾아 해당 index의 데이터를 치환한다.
-		LOGGER.debug(paramData.getSeqNum()-1+" ");
-		LOGGER.debug(addressBookList.indexOf(paramData)+" ");
-		addressBookList.set(addressBookList.indexOf(paramData), paramData);
+
+		for ( int i = 0; i < addressBookList.size(); i++ ) {
+			if ( paramData.getSeqNum() == addressBookList.get(i).getSeqNum() ) {
+				addressBookList.set(i, paramData);				
+			}
+			else {
+				LOGGER.debug("잘못된 값입니다.");
+			}
+		} 
 		LOGGER.debug(paramData.getName() + " 님의 정보수정 완료");
 		saveAddressBook();
 		return 0;
@@ -103,8 +124,18 @@ public class FileAddressBookImpl implements AddressBookInterface {
 	@Override
 	public int deleteAddressBook(AddressBookVo paramData) throws Exception {
 		// 동일한 seqNum의 주소 정보를 addressBookList에 찾아 해당 index의 데이터를 삭제한다.
-		addressBookList.remove(addressBookList.indexOf(paramData));
-		LOGGER.debug(paramData.getName() + " 님의 정보삭제 완료");
+		//LOGGER.debug(addressBookList.indexOf(paramData)+" index of");
+		//addressBookList.remove(addressBookList.set(addressBookList.indexOf(paramData), paramData));
+		
+		for ( int i = 0; i < addressBookList.size(); i++ ) {
+			System.out.println("paramData.getSeqNum():"+paramData.getSeqNum());
+			System.out.println("addressBookList.get(i).getSeqNum():"+addressBookList.get(i).getSeqNum());
+			if ( paramData.getSeqNum() == addressBookList.get(i).getSeqNum() ) {
+				addressBookList.remove(i);
+			}
+		}
+		LOGGER.debug(paramData.getSeqNum() + "");
+		LOGGER.debug("삭제된 seq : " + paramData.getSeqNum() + "" + paramData.getName() + " 님의 정보삭제 완료");
 		saveAddressBook();
 		return 0;
 	}

@@ -17,8 +17,11 @@ public class AdressBookMain {
 			AddressBookInterface addressBook = new FileAddressBookImpl("data/addressbook.dat");
 			
 			AddressBookVo addressBookVo = new AddressBookVo("배수현", "1975-09-04", Gender.MAN, "010-0000-0000", "서울");
+			AddressBookVo addressBookVo2 = new AddressBookVo("배수현", "1975-09-04", Gender.MAN, "010-0000-0000", "서울");
 	
-			addressBook.insertAddressBook(addressBookVo);
+//			addressBook.insertAddressBook(addressBookVo);
+//			addressBook.insertAddressBook(addressBookVo2);
+			addressBook.selectAddressBook(null);
 			
 			List<AddressBookVo> addressBookList = addressBook.selectAddressBook(new AddressBookVo());
 			for (AddressBookVo oneAddressBook : addressBookList) {
