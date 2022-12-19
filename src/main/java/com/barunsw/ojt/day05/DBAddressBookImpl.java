@@ -1,11 +1,5 @@
 package com.barunsw.ojt.day05;
 
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -18,21 +12,22 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.barunsw.ojt.constants.Gender;
 import com.barunsw.ojt.intf.AddressBookInterface;
 import com.barunsw.ojt.vo.AddressBookVo;
 
-public class FileAddressBookImpl implements AddressBookInterface {
-	private List<AddressBookVo> addressBookList = new ArrayList<AddressBookVo>();
-
-	private static Logger LOGGER = LoggerFactory.getLogger(FileAddressBookImpl.class);
+public class DBAddressBookImpl implements AddressBookInterface {
+	private static Logger LOGGER = LoggerFactory.getLogger(DBAddressBookImpl.class);
 	
 	private final static String URL = "jdbc:mysql://localhost:3306/OJT?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false";
 	private final static String USER = "root";
 	private final static String PASSWD = "real3817";
 	
 
-	public FileAddressBookImpl() throws Exception {
+	public DBAddressBookImpl() throws Exception {
 		Class.forName("org.mariadb.jdbc.Driver");
+		
+		// = new org.mariadb.jdbc.Driver();
 	}
 	
 	@Override
@@ -46,17 +41,27 @@ public class FileAddressBookImpl implements AddressBookInterface {
 		 * PreparedStatement: Statement 클래스 기능 향상
 		 * 
 		 */
+		List<AddressBookVo> addressList = new ArrayList<>();
+		
 		try (Connection conn = DriverManager.getConnection(URL, USER, PASSWD);
 			Statement stmt = conn.createStatement();) {
 			
 			ResultSet resultSet = stmt.executeQuery("SELECT * FROM TB_PERSON");
 			while (resultSet.next()) {
-				String seq 		= resultSet.getString(1);
+				int seq 		= resultSet.getInt(1);
 				String name 	= resultSet.getString(2);
-				String gender	= resultSet.getString(3);
+				String _gender	= resultSet.getString(3);
 				String birth	= resultSet.getString(4);
 				String phone	= resultSet.getString(5);
 				String address	= resultSet.getString(6);
+				
+				Gender gender 	= Gender.getGender(_gender);
+				
+				AddressBookVo addressBookVo = new AddressBookVo();
+				addressBookVo.setSeqNum(seq);
+				addressBookVo.setGender(gender);
+				
+				addressList.add(addressBookVo);
 				
 				LOGGER.debug(String.format("seq:%s, name:%s, gender:%s, birth:%s, phone:%s, address:%s", seq, name, gender, birth, phone, address));
 			}
@@ -66,18 +71,16 @@ public class FileAddressBookImpl implements AddressBookInterface {
 		}
 		
 		
-//		for (AddressBookVo oneAddressBook : addressBookList) {
-//			LOGGER.debug(oneAddressBook.toString());
-//			}
-		return addressBookList;
+		for (AddressBookVo oneAddressBook : addressList) {
+			LOGGER.debug(oneAddressBook.toString());
+		}
+		
+		return addressList;
 	}
 
 	@Override
 	public int insertAddressBook(AddressBookVo paramData) throws Exception {
 		// TODO Auto-generated method stub
-//		addressBookList.add(paramData);
-//		LOGGER.debug(paramData.getName()+" 정보등록 완료");
-//		saveAddressBook();
 		String pstmtSql = String.format("INSERT INTO TB_PERSON(NAME, BIRTH, PHONE, ADDRESS) "
 				+ "VALUES (?, ?, ?, ?)");
 		
@@ -100,23 +103,17 @@ public class FileAddressBookImpl implements AddressBookInterface {
 			LOGGER.debug("result2:" + result2);
 			
 		}
+		
 		return 0;
 	}
 
 	@Override
 	public int updateAddressBook(AddressBookVo paramData) throws Exception {
-		// 동일한 seqNum의 주소 정보를 addressBookList에 찾아 해당 index의 데이터를 치환한다.
-		addressBookList.set(paramData.getSeqNum()-1, paramData);
-		LOGGER.debug(paramData.getName() + " 님의 정보수정 완료");
 		return 0;
 	}
 
 	@Override
 	public int deleteAddressBook(AddressBookVo paramData) throws Exception {
-		// 동일한 seqNum의 주소 정보를 addressBookList에 찾아 해당 index의 데이터를 삭제한다.
-
-		addressBookList.remove(paramData.getSeqNum()-1);
-		LOGGER.debug(paramData.getName() + " 님의 정보삭제 완료");
 		return 0;
 	}
 

@@ -98,6 +98,7 @@ public class FileAddressBookImpl {
 			int result = stmt.executeUpdate(insertSql);
 			LOGGER.debug(result + "개 작업 수행 완료.");
 
+			pstmt.setString(5, paramData.getGender().toString());
 			//pstmt 방식은 gender 업데이트 과정에서 enum을 처리할 때 문제로 업데이트가 쉽지않은거같음
 //			pstmt.setString(1, paramData.getName());
 //			pstmt.setString(2, paramData.getBirthday());

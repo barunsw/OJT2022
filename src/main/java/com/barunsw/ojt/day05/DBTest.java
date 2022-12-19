@@ -10,7 +10,7 @@ public class DBTest {
 	private static Logger LOGGER = LoggerFactory.getLogger(DBTest.class);
 
 	public static void main(String[] args) throws Exception {
-		AddressBookInterface addressBook = new FileAddressBookImpl();
+		AddressBookInterface addressBook = new DBAddressBookImpl();
 		
 		addressBook.selectAddressBook(null);  // 연락처 조회문
 		
