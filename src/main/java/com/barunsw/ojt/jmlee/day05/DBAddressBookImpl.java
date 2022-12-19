@@ -16,36 +16,45 @@ import org.slf4j.LoggerFactory;
 import com.barunsw.ojt.constants.Gender;
 import com.barunsw.ojt.vo.AddressBookVo;
 
-public class FileAddressBookImpl {
-
-	private List<AddressBookVo> addresBookList = new ArrayList<AddressBookVo>();
+public class DBAddressBookImpl {
 	
-	private static Logger LOGGER = LoggerFactory.getLogger(FileAddressBookImpl.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(DBAddressBookImpl.class);
 	
 	private static final String DB_URL = "jdbc:mysql://localhost:3306/ojt"; // DB 주소
-
 	private static final String DB_USERNAME = "root";						// DB 사용자
-
-	private static final String DB_PASSWORD = "java1234";					// DB PW
+	private static final String DB_PASSWORD = "1234";					// DB PW
 	
 	
-	public FileAddressBookImpl() throws Exception {
+	public DBAddressBookImpl() throws Exception {
 		Class.forName("org.mariadb.jdbc.Driver");
 	}
 	
 	public List<AddressBookVo> selectAddressBookVos(AddressBookVo paramData){
+		
+		List<AddressBookVo> addressBookList = new ArrayList<AddressBookVo>();
 		
 		try (Connection conn = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
 				Statement stmt = conn.createStatement();) {
 			
 			ResultSet resultSet = stmt.executeQuery("SELECT * FROM tb_addressbook");
 			while (resultSet.next()) {						// next()는 데이터를 처음부터 읽어오기 때문에 roof를 돌면서 한줄 씩 출력하게 하는 함수
-				String seq		= resultSet.getString(1); 
+				int seq		= resultSet.getInt(1); 
 				String name		= resultSet.getString(2);
 				String birth	= resultSet.getString(3);
-				String gender	= resultSet.getString(4);
+				String _gender	= resultSet.getString(4);
 				String phone	= resultSet.getString(5);
 				String address	= resultSet.getString(6);
+				
+				Gender gender = Gender.getGender(_gender);
+				
+				AddressBookVo addressBookVo = new AddressBookVo();
+				addressBookVo.setSeqNum(seq);
+				addressBookVo.setName(name);
+				addressBookVo.setGender(gender);
+				addressBookVo.setPhoneNumber(phone);
+				addressBookVo.setAddress(address);
+				
+				addressBookList.add(addressBookVo);
 				
 				LOGGER.debug(String.format("seq : %s, name : %s, gender : %s, birth : %s, phone : %s, address : %s", seq, name, gender, birth, phone, address ));
 			}
@@ -53,7 +62,12 @@ public class FileAddressBookImpl {
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
-		return addresBookList;
+		
+		for (AddressBookVo AddressBook : addressBookList) {
+			LOGGER.debug(AddressBook.toString());
+		}
+		
+		return addressBookList;
 	}
 	
 	public int insertAddressBook(AddressBookVo paramData) throws Exception {
@@ -92,10 +106,10 @@ public class FileAddressBookImpl {
 				Statement stmt = conn.createStatement();
 				){
 			
-			String insertSql = String.format("UPDATE tb_addressbook SET NAME='%s', BIRTH='%s', GENDER='%s', PHONE='%s', ADDRESS='%s' WHERE SEQ=%d"
+			String sql = String.format("UPDATE tb_addressbook SET NAME='%s', BIRTH='%s', GENDER='%s', PHONE='%s', ADDRESS='%s' WHERE SEQ=%d"
 					, paramData.getName(), paramData.getBirthday(), paramData.getGender(), paramData.getPhoneNumber(), paramData.getAddress(), paramData.getSeqNum());
 			
-			int result = stmt.executeUpdate(insertSql);
+			int result = stmt.executeUpdate(sql);
 			LOGGER.debug(result + "개 작업 수행 완료.");
 
 			pstmt.setString(5, paramData.getGender().toString());
