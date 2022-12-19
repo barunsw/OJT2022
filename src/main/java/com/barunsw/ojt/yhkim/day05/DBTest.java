@@ -1,5 +1,7 @@
 package com.barunsw.ojt.yhkim.day05;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,29 +13,48 @@ public class DBTest {
 	private static Logger LOGGER = LoggerFactory.getLogger(DBTest.class);
 
 	public static void main(String[] args) throws Exception {
-		AddressBookInterface addressBook = new FileAddressBookImpl();
+		AddressBookInterface addressBook = new DBAddressBookImpl();
 		
-		addressBook.selectAddressBook(null);  // 연락처 조회문
-		
-		AddressBookVo paramVo = new AddressBookVo("홍길동", "2000", Gender.MAN, "12345", "제주");
-		AddressBookVo paramVo2 = new AddressBookVo("홍미미", "2000", Gender.MAN, "12345", "제주");
-		LOGGER.debug("paramVo 데이터의 seq : "+paramVo.getSeqNum());
-		LOGGER.debug("paramVo2 데이터의 seq : "+paramVo2.getSeqNum());
+		List<AddressBookVo> addressBookList = addressBook.selectAddressBook(null); 
 
-//		paramVo.setName("홍길동");
-//		paramVo.setBirthday("1994");
-//		paramVo.setPhoneNumber("1234");
-//		paramVo.setAddress("서울");
+		AddressBookVo paramVo = new AddressBookVo();
+		paramVo.setName("홍길동");
+		paramVo.setBirthday("1994");
+		paramVo.setGender(Gender.MAN);
+		paramVo.setPhoneNumber("1234");
+		paramVo.setAddress("서울");
 		
 		addressBook.insertAddressBook(paramVo);
-		addressBook.insertAddressBook(paramVo2);
+		
+		addressBookList = addressBook.selectAddressBook(null);
+		for(AddressBookVo b : addressBookList) {
+			LOGGER.debug(b.toString());
+		}
+		
+		AddressBookVo updateParam = new AddressBookVo();
+		updateParam.setSeqNum(115);
+		updateParam.setName("홍길동");
+		updateParam.setBirthday("2022");
+		updateParam.setGender(Gender.MAN);
+		updateParam.setPhoneNumber("0908");
+		updateParam.setAddress("대구");
+		
+		addressBook.updateAddressBook(updateParam);
+		
+		addressBookList = addressBook.selectAddressBook(null);
+		for(AddressBookVo b : addressBookList) {
+			LOGGER.debug(b.toString());
+		}
 
-		addressBook.selectAddressBook(null);  
+		AddressBookVo delParam = new AddressBookVo();
+		delParam.setSeqNum(114);
 		
-		paramVo.setPhoneNumber("dddddd");
-		addressBook.updateAddressBook(paramVo);
+		addressBook.deleteAddressBook(delParam);
 		
-		//addressBook.deleteAddressBook(paramVo);
+		addressBookList = addressBook.selectAddressBook(null);
+		for(AddressBookVo b : addressBookList) {
+			LOGGER.debug(b.toString());
+		}
 		
 	}
 }
