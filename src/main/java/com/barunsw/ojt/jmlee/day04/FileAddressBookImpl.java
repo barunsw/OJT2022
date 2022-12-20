@@ -49,31 +49,28 @@ public class FileAddressBookImpl implements AddressBookInterface {
 			while ((o = inputStream.readObject()) != null) {
 				if(o instanceof AddressBookVo) {
 				AddressBookVo addressBook = (AddressBookVo)o;
-//				addressBook.setSeqNum(addressBookList.size()+1);
 				addressBookList.add(addressBook);
 				}
 			}
-
+			lastSeqNum = addressBookList.size() -1;
+			addressBookList.get(lastSeqNum).getSeqNum();
 		}
 		catch (EOFException eofe) {}
 		catch (Exception ex) {
 			LOGGER.error(ex.getMessage(),ex);
 		}
-		lastSeqNum = addressBookList.size();
-		LOGGER.debug("lastSeqNum : " + lastSeqNum);
-	
+		if (addressBookList.size() > 0) {
+			AddressBookVo.resetSeqNum(lastSeqNum +1) ;
+		}
+		
 	}
 	
 	private void saveAddressBook() throws Exception {
 		// addressBookList의 데이터를 파일에 저장한다.(ObjectOutputStream)
-		
 		try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(filePath))) {
 			System.out.println("addressBookList:" + addressBookList.size());
-			int seq = 1;
 			for (AddressBookVo addressBook : addressBookList) {
-				addressBook.setSeqNum(seq);
 				outputStream.writeObject(addressBook);
-				seq++;
 			}
 			
 		}
