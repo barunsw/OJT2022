@@ -20,7 +20,7 @@ public class AddressBookVo implements Serializable {
 	}
 	
 	public AddressBookVo(String name, String birthday, Gender gender, String phoneNumber, String address) {
-		//this.seqNum = generateSeqNum();
+		this.seqNum = generateSeqNum();
 		this.name = name;
 		this.birthday = birthday;
 		this.gender = gender;
