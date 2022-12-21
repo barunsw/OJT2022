@@ -25,15 +25,18 @@ public class DBTest {
 		try (SqlSession session = sqlSessionFactory.openSession()){
 			AddressBookDao mapper = session.getMapper(AddressBookDao.class);
 
-//			insert		
-			AddressBookVo insert = new AddressBookVo();
-			insert.setName("김종국");
-			insert.setBirthday("1999");
-			insert.setGender(Gender.MAN);
-			insert.setPhoneNumber("5999");
-			insert.setAddress("평양");
+// 			select
+			addressBook.selectAddressBook(null);
 			
-			addressBook.insertAddressBook(insert);
+//			insert		
+//			AddressBookVo insert = new AddressBookVo();
+//			insert.setName("김종국");
+//			insert.setBirthday("1999");
+//			insert.setGender(Gender.MAN);
+//			insert.setPhoneNumber("5999");
+//			insert.setAddress("평양");
+//			
+//			addressBook.insertAddressBook(insert);
 			
 			
 //			Update
@@ -47,11 +50,6 @@ public class DBTest {
 //			delete.setSeqNum(4);
 //			addressBook.deleteAddressBook(delete);
 			
-			// select
-			List<AddressBookVo> addressBookList = mapper.selectAddressBookList(null);
-			for (AddressBookVo b : addressBookList) {
-				LOGGER.debug(b.toString());
-			}
 			
 			
 		

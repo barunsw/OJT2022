@@ -25,9 +25,12 @@ public class MybatisAddressBookImpl implements AddressBookInterface {
 			
 			List<AddressBookVo> addressBooklist = mapper.selectAddressBookList(new AddressBookVo());
 			
-			for (int i = 0; i < addressBooklist.size(); i++) {
-				LOGGER.debug(String.format("[%d]%s", i, addressBooklist.get(i)));
+			for (AddressBookVo s : addressBooklist) {
+				LOGGER.debug(s.toString());
 			}
+//			for (int i = 0; i < addressBooklist.size(); i++) {
+//				LOGGER.debug(String.format("[%d]%s", i, addressBooklist.get(i)));
+//			}
 			return addressBooklist;
 		}
 	}
