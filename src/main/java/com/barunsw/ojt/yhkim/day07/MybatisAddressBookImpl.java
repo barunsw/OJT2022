@@ -1,5 +1,6 @@
 package com.barunsw.ojt.yhkim.day07;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
@@ -11,59 +12,79 @@ import com.barunsw.ojt.intf.AddressBookInterface;
 import com.barunsw.ojt.vo.AddressBookVo;
 
 public class MybatisAddressBookImpl implements AddressBookInterface {
-   private static Logger LOGGER = LogManager.getLogger(AddressBookInterface.class);
-   private static SqlSessionFactory sqlSessionFactory = SqlSessionFactoryManager.getSqlSessionFactory();
+	private static Logger LOGGER = LogManager.getLogger(MybatisAddressBookImpl.class);
+	private static SqlSessionFactory sqlSessionFactory = SqlSessionFactoryManager.getSqlSessionFactory();
 
-   @Override
-   public List<AddressBookVo> selectAddressBook(AddressBookVo paramData) {
+	@Override
+	public List<AddressBookVo> selectAddressBook(AddressBookVo paramData) {
+		
+		List<AddressBookVo> addressBookList = new ArrayList<>();
+		
+		try (SqlSession session = sqlSessionFactory.openSession()) {
+			AddressBookInterface mapper = session.getMapper(AddressBookInterface.class);
 
-      try (SqlSession session = sqlSessionFactory.openSession()) {
-         AddressBookDao mapper = session.getMapper(AddressBookDao.class);
-         
-         List<AddressBookVo> addressBookList = mapper.selectAddressBook(new AddressBookVo());
-         
-         for (int i = 0; i < addressBookList.size(); i++) {
-            LOGGER.debug(String.format("[%d]%s", i, addressBookList.get(i)));
-         }
-         
-         return addressBookList;
-      } 
-   }
+			addressBookList = mapper.selectAddressBook(new AddressBookVo());
 
-   @Override
-   public int insertAddressBook(AddressBookVo paramData) throws Exception {
-      try (SqlSession session = sqlSessionFactory.openSession()) {
-         AddressBookDao mapper = session.getMapper(AddressBookDao.class);
-         
-         int result = mapper.insertAddressBook(paramData);
-         session.commit();
-         
-         return 0;
-      } 
-   }
+//			for (AddressBookVo b : addressBookList) {
+//				LOGGER.debug(b.toString());
+//			}
 
-   @Override
-   public int updateAddressBook(AddressBookVo paramData) throws Exception {
-      try (SqlSession session = sqlSessionFactory.openSession()) {
-         AddressBookDao mapper = session.getMapper(AddressBookDao.class);
-         
-         int result = mapper.updateAddressBook(paramData);
-         session.commit();
-         
-         return 0;
-      }    
-   }
+		}
+		catch (Exception e) {
+			LOGGER.debug(e);
+		}
+		return addressBookList;
+	}
 
-   @Override
-   public int deleteAddressBook(AddressBookVo paramData) throws Exception {
-      try (SqlSession session = sqlSessionFactory.openSession()) {
-         AddressBookDao mapper = session.getMapper(AddressBookDao.class);
-         
-         int result = mapper.deleteAddressBook(paramData);
-         session.commit();
+	@Override
+	public int insertAddressBook(AddressBookVo paramData) throws Exception {
+		int result = 0;
+		try (SqlSession session = sqlSessionFactory.openSession()) {
+			AddressBookInterface mapper = session.getMapper(AddressBookInterface.class);
 
-         return 0;
-      }
-   }
+			result = mapper.insertAddressBook(paramData);
+			LOGGER.debug("INSERT : "+result);
+
+			session.commit();
+		} 
+		catch (Exception e) {
+			LOGGER.debug(e);
+		}
+		return result;
+	}
+
+	@Override
+	public int updateAddressBook(AddressBookVo paramData) throws Exception {
+		int result = 0;
+		try (SqlSession session = sqlSessionFactory.openSession()) {
+			AddressBookInterface mapper = session.getMapper(AddressBookInterface.class);
+
+			result = mapper.updateAddressBook(paramData);
+			LOGGER.debug("UPDATE : "+result);
+
+			session.commit();
+		}
+		catch (Exception e) {
+			LOGGER.debug(e);
+		}
+		return result;
+	}
+
+	@Override
+	public int deleteAddressBook(AddressBookVo paramData) throws Exception {
+		int result = 0;
+		try (SqlSession session = sqlSessionFactory.openSession()) {
+			AddressBookInterface mapper = session.getMapper(AddressBookInterface.class);
+
+			result = mapper.deleteAddressBook(paramData);
+			LOGGER.debug("DELETE : "+result);
+
+			session.commit();
+		}		
+		catch (Exception e) {
+			LOGGER.debug(e);
+		}
+		return result;
+	}
 
 }
