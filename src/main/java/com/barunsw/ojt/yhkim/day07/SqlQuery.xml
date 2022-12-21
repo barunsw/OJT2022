@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.barunsw.ojt.yhkim.day07.AddressBookDao">
+<mapper namespace="com.barunsw.ojt.intf.AddressBookInterface">
   <select id="selectAddressBook" parameterType="com.barunsw.ojt.vo.AddressBookVo" 
      resultType="com.barunsw.ojt.vo.AddressBookVo">
     SELECT * FROM TB_ADDRESS

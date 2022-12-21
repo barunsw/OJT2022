@@ -18,6 +18,6 @@
   </environments>
  <!-- sql 파일의 정보를 설정할 때 사용. 파일이 많으면 **로 관련된 mapper를 다 읽음 -->
   <mappers>
-    <mapper resource="com/barunsw/ojt/yhkim/day07/AddressBookDao.xml"/>
+    <mapper resource="com/barunsw/ojt/yhkim/day07/SqlQuery.xml"/>
   </mappers>
 </configuration>
