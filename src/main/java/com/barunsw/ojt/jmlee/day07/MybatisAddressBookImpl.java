@@ -1,5 +1,6 @@
 package com.barunsw.ojt.jmlee.day07;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
@@ -20,10 +21,13 @@ public class MybatisAddressBookImpl implements AddressBookInterface {
 
 	@Override
 	public List<AddressBookVo> selectAddressBook(AddressBookVo paramData) {
+		
+		List<AddressBookVo> addressBooklist = new ArrayList<>();
+		
 		try (SqlSession session = sqlSessionFactory.openSession()) {
 			AddressBookDao mapper = session.getMapper(AddressBookDao.class);
 			
-			List<AddressBookVo> addressBooklist = mapper.selectAddressBookList(new AddressBookVo());
+				addressBooklist = mapper.selectAddressBookList(new AddressBookVo());
 			
 			for (AddressBookVo s : addressBooklist) {
 				LOGGER.debug(s.toString());
@@ -31,8 +35,10 @@ public class MybatisAddressBookImpl implements AddressBookInterface {
 //			for (int i = 0; i < addressBooklist.size(); i++) {
 //				LOGGER.debug(String.format("[%d]%s", i, addressBooklist.get(i)));
 //			}
-			return addressBooklist;
+		} catch (Exception ex) {
+			LOGGER.debug(ex.getMessage(), ex);
 		}
+		return addressBooklist;
 	}
 
 	@Override
@@ -45,6 +51,9 @@ public class MybatisAddressBookImpl implements AddressBookInterface {
 			mapper.insertAddressBook(paramData);
 			session.commit();
 			System.out.println("insert end");	
+		}
+		catch (Exception ex) {
+			LOGGER.debug(ex.getMessage(), ex);
 		}
 		
 		
@@ -61,6 +70,9 @@ public class MybatisAddressBookImpl implements AddressBookInterface {
 			session.commit();
 			LOGGER.debug("update end");	
 		}		
+		catch (Exception ex) {
+			LOGGER.debug(ex.getMessage(), ex);
+		}
 		return 0;
 	}
 
@@ -74,6 +86,9 @@ public class MybatisAddressBookImpl implements AddressBookInterface {
 			session.commit();
 			LOGGER.debug("Delete end");	
 		}				
+		catch (Exception ex) {
+			LOGGER.debug(ex.getMessage(), ex);
+		}
 		return 0;
 	}
 
