@@ -1,4 +1,4 @@
-package com.barunsw.ojt.jmlee.day07;
+package com.barunsw.ojt.jmlee.day09;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,12 +10,13 @@ import org.slf4j.LoggerFactory;
 
 import com.barunsw.ojt.constants.Gender;
 import com.barunsw.ojt.intf.AddressBookInterface;
+import com.barunsw.ojt.jmlee.day07.AddressBookDao;
 import com.barunsw.ojt.jmlee.day07.SqlSessionFactoryManager;
 import com.barunsw.ojt.vo.AddressBookVo;
 
-public class MybatisAddressBookImpl implements AddressBookInterface {
+public class SwingAddressBookImpl implements AddressBookInterface {
    	
-	private static final Logger LOGGER = LoggerFactory.getLogger(MybatisAddressBookImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SwingAddressBookImpl.class);
 	
 	private static final SqlSessionFactory sqlSessionFactory = SqlSessionFactoryManager.getSqlSessionFactory();
 
