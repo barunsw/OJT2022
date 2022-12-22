@@ -21,14 +21,14 @@ public class DBTest {
 			LOGGER.debug(b.toString());
 		}
 
-//		AddressBookVo insertData = new AddressBookVo();
-//		insertData.setName("김하나");
-//		insertData.setBirthday("2000");
-//		insertData.setGender(Gender.MAN);
-//		insertData.setPhoneNumber("010-1344-1234");
-//		insertData.setAddress("강릉");
+		AddressBookVo insertData = new AddressBookVo();
+		insertData.setName("김하나");
+		insertData.setBirthday("2000");
+		insertData.setGender(Gender.MAN);
+		insertData.setPhoneNumber("010-1344-1234");
+		insertData.setAddress("강릉");
 //
-//		int insertResult = addressBook.insertAddressBook(insertData);
+		int insertResult = addressBook.insertAddressBook(insertData);
 //
 //		addressBookList = addressBook.selectAddressBook(null);
 //		for (AddressBookVo b : addressBookList) {

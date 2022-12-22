@@ -23,9 +23,8 @@ public class DBTest {
 		
 		//﻿mybatis에서는 기존의 커넥션 방식보다 단계가 간편화된다
 		try (SqlSession session = sqlSessionFactory.openSession()){
-			AddressBookDao mapper = session.getMapper(AddressBookDao.class);
-
 // 			select
+			
 			addressBook.selectAddressBook(null);
 			
 //			insert		
