@@ -25,10 +25,6 @@ public class MybatisAddressBookImpl implements AddressBookInterface {
 
 			addressBookList = mapper.selectAddressBook(new AddressBookVo());
 
-//			for (AddressBookVo b : addressBookList) {
-//				LOGGER.debug(b.toString());
-//			}
-
 		}
 		catch (Exception e) {
 			LOGGER.debug(e);

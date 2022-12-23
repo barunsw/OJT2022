@@ -36,7 +36,7 @@ import com.barunsw.ojt.constants.Gender;
 import com.barunsw.ojt.day09.CommonTableModel;
 import com.barunsw.ojt.intf.AddressBookInterface;
 import com.barunsw.ojt.vo.AddressBookVo;
-import com.barunsw.ojt.yhkim.day07.MybatisAddressBookImpl;
+import com.barunsw.ojt.yhkim.day09.MybatisAddressBookImpl;
 
 public class AddressBookFrame extends JFrame {
 	private static Logger LOGGER = LoggerFactory.getLogger(AddressBookFrame.class);
