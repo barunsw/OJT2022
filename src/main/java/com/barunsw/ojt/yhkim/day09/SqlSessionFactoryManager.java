@@ -17,7 +17,7 @@ public class SqlSessionFactoryManager {
 	// 가장 먼저 실행. 맨 처음에만 실행되고 이후 부터는 실행되지 않아 매번 connection하지 않아도 됨.
 	static {
 		// config.xml 파일 경로 설정
-		String resource = "com/barunsw/ojt/yhkim/day07/SqlMapConfig.xml";
+		String resource = "com/barunsw/ojt/yhkim/day09/SqlMapConfig.xml";
 		
 		// 데이터를 읽어오는것 (Reader or InputStream)
 		Reader reader = null;
