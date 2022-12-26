@@ -193,7 +193,6 @@ public class TestPanel extends JPanel {
 	}
 	
 	private void initTree() {
-		treeModel.setRoot(rootNode);
 		jTree_Result.setModel(treeModel);
 		// root노드 숨김
 		// jTree_Result.setRootVisible(false);
@@ -237,23 +236,23 @@ public class TestPanel extends JPanel {
 	}
 	
 	void jTree_Result_mouseReleased(MouseEvent e) {
-		 TreePath tp = jTree_Result.getPathForLocation(e.getX(), e.getY());
-		 
+		TreePath tp = jTree_Result.getPathForLocation(e.getX(), e.getY());
 		GroupBookVo g = new GroupBookVo();
-		 
-		 if(tp!=null) {
-			jTextField_ParentGroup.setText((tp.getPath()[1]).toString());
+
+		if(tp!=null) {
 			if(tp.getPath().length > 2) {
-				g.setGroup_name((tp.getPath()[2]).toString());
-				g = groupBookIf.selectOneGroup(g);
-				jTextField_GroupId.setText(g.getGroup_id()+"");
-				jTextField_Group.setText((tp.getPath()[2]).toString());				 
+				jTextField_Group.setText((tp.getPath()[2])+"");				 
+				g.setGroup_name((tp.getPath()[2]).toString()); // 그룹명의 id
 			} 
 			else { 
-				jTextField_GroupId.setText(null);
 				jTextField_Group.setText("상위 그룹입니다");
+				g.setGroup_name((tp.getPath()[1]).toString()); // 상위 그룹명의 id
 			}
-		 }
+
+			g = groupBookIf.selectOneGroup(g);
+			jTextField_GroupId.setText(g.getGroup_id()+"");
+			jTextField_ParentGroup.setText((tp.getPath()[1]).toString());
+		}
 	}
 	
 	public void textFieldReset() {
@@ -270,12 +269,12 @@ public class TestPanel extends JPanel {
 		if (!group.equals("")) {
 			GroupBookVo g = new GroupBookVo();
 			g.setGroup_name(parentGroup);
-			GroupBookVo g2 = groupBookIf.selectOneGroup(g);
+			GroupBookVo g2 = groupBookIf.selectOneGroup(g); // parentGroup의 group_id 구하기
 			num = g2.getGroup_id();
 		}
 		else {
 			group = parentGroup;
-			num = 0;
+			num = 0; // 상위 그룹의 parent_group_id는 0
 		}
 
 		GroupBookVo oneGroup = new GroupBookVo();

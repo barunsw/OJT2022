@@ -27,6 +27,6 @@
   
   <delete id="deleteGroupBook" parameterType="com.barunsw.ojt.yhkim.day10.GroupBookVo">
      DELETE FROM TB_GROUP
-     WHERE GROUP_ID=#{group_id}
+     WHERE GROUP_ID=#{group_id} OR PARENT_GROUP_ID=#{group_id}
   </delete>
 </mapper>
