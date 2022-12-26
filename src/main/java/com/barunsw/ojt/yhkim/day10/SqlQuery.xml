@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.barunsw.ojt.yhkim.day10.GroupBookInterface">
+  <select id="selectGroupBook" parameterType="com.barunsw.ojt.yhkim.day10.GroupBookVo" 
+     resultType="com.barunsw.ojt.yhkim.day10.GroupBookVo">
+    SELECT * FROM TB_GROUP ORDER BY PARENT_GROUP_ID ASC
+  </select>
+  
+  <select id="selectOneGroup" parameterType="com.barunsw.ojt.yhkim.day10.GroupBookVo" 
+     resultType="com.barunsw.ojt.yhkim.day10.GroupBookVo">
+    SELECT * FROM TB_GROUP WHERE GROUP_NAME=#{group_name}
+  </select>
+  
+  <insert id="insertGroupBook" parameterType="com.barunsw.ojt.yhkim.day10.GroupBookVo">
+     INSERT INTO TB_GROUP
+     (GROUP_ID, GROUP_NAME, PARENT_GROUP_ID)
+     VALUES (#{group_id}, #{group_name}, #{parent_group_id}) 
+  </insert>
+  
+  <update id="updateGroupBook" parameterType="com.barunsw.ojt.yhkim.day10.GroupBookVo">
+     UPDATE TB_GROUP
+     SET GROUP_NAME=#{group_name}, PARENT_GROUP_ID=#{parent_group_id}
+     WHERE GROUP_ID=#{group_id}
+  </update>
+  
+  <delete id="deleteGroupBook" parameterType="com.barunsw.ojt.yhkim.day10.GroupBookVo">
+     DELETE FROM TB_GROUP
+     WHERE GROUP_ID=#{group_id}
+  </delete>
+</mapper>

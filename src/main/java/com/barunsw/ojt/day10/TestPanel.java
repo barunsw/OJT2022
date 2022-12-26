@@ -70,7 +70,7 @@ public class TestPanel extends JPanel {
 	private void initTree() {
 		jTree_Result.setModel(treeModel);
 		// root노드 숨김
-		jTree_Result.setRootVisible(false);
+		// jTree_Result.setRootVisible(false);
 	}
 	
 	private void initData() {
