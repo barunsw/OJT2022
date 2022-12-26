@@ -16,11 +16,9 @@ public class ClockPanel extends JPanel {
 	private static Logger LOGGER = LogManager.getLogger(ClockPanel.class);
 	
 	private Timer timer;
-	
-	public static final int WIDTH = 600;
-	public static final int HEIGHT = 600;
-	
-	int sec, min, hour, secX, secY, minX, minY, hourX, hourY, oX, oY, r;
+	private int sec, min, hour, secX, secY, minX, minY, hourX, hourY; 	
+	private int oX =300, oY = 300;
+	private int r = 200;
 	Calendar cal;
 	
 	public ClockPanel() {
@@ -54,9 +52,7 @@ public class ClockPanel extends JPanel {
 	}
 	
 	private void initData() {
-		
-		oX = oY = 300;
-		r = 200;
+
 		//LOGGER.debug("init data");
 
 		cal = Calendar.getInstance();
