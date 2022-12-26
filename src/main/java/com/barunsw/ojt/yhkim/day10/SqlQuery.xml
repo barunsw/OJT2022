@@ -10,23 +10,23 @@
   
   <select id="selectOneGroup" parameterType="com.barunsw.ojt.yhkim.day10.GroupBookVo" 
      resultType="com.barunsw.ojt.yhkim.day10.GroupBookVo">
-    SELECT * FROM TB_GROUP WHERE GROUP_NAME=#{group_name}
+    SELECT * FROM TB_GROUP WHERE GROUP_NAME=#{GROUP_NAME}
   </select>
   
   <insert id="insertGroupBook" parameterType="com.barunsw.ojt.yhkim.day10.GroupBookVo">
      INSERT INTO TB_GROUP
      (GROUP_ID, GROUP_NAME, PARENT_GROUP_ID)
-     VALUES (#{group_id}, #{group_name}, #{parent_group_id}) 
+     VALUES (#{GROUP_ID}, #{GROUP_NAME}, #{PARENT_GROUP_ID}) 
   </insert>
   
   <update id="updateGroupBook" parameterType="com.barunsw.ojt.yhkim.day10.GroupBookVo">
      UPDATE TB_GROUP
-     SET GROUP_NAME=#{group_name}, PARENT_GROUP_ID=#{parent_group_id}
-     WHERE GROUP_ID=#{group_id}
+     SET GROUP_NAME=#{GROUP_NAME}, PARENT_GROUP_ID=#{PARENT_GROUP_ID}
+     WHERE GROUP_ID=#{GROUP_ID}
   </update>
   
   <delete id="deleteGroupBook" parameterType="com.barunsw.ojt.yhkim.day10.GroupBookVo">
      DELETE FROM TB_GROUP
-     WHERE GROUP_ID=#{group_id}
+     WHERE GROUP_ID=#{GROUP_ID}
   </delete>
 </mapper>

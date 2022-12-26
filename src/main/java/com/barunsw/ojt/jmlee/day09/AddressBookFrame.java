@@ -78,7 +78,7 @@ public class AddressBookFrame extends JFrame {
 		catch (Exception ex) {
 			LOGGER.error(ex.getMessage(), ex);
 		}
-		setDefaultCloseOperation(EXIT_ON_CLOSE); // 창 닫으면 자동으로 프로세스 종료
+		//setDefaultCloseOperation(EXIT_ON_CLOSE); // 창 닫으면 자동으로 프로세스 종료
 	}
 	
 

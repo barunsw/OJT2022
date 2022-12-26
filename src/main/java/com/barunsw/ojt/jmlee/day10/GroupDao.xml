@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.barunsw.ojt.jmlee.day10.GroupInterface">
+  <select id="selectGroup" parameterType="com.barunsw.ojt.jmlee.day10.GroupVo" 
+  	resultType="com.barunsw.ojt.jmlee.day10.GroupVo">
+    SELECT * FROM tb_group order by parent_group_id asc
+  </select>
+  
+  <insert id="insertGroup" parameterType="com.barunsw.ojt.jmlee.day10.GroupVo">
+  	INSERT INTO tb_group
+  	(GROIP_ID, GROUP_NAME, PARENT_GROUP_ID) 
+  	VALUES (#{group_id}, #{group_name}, #{parent_group_id})
+  </insert>
+  
+  <update id="updateGroup" parameterType="com.barunsw.ojt.jmlee.day10.GroupVo">
+  	UPDATE tb_group
+  	SET GROUP_NAME = #{group_name}, PARENT_GROUP_ID=#{parent_group_id}
+    WHERE GROUP_ID=#{group_id}
+  </update>
+  
+  <delete id="deleteGroup" parameterType="com.barunsw.ojt.jmlee.day10.GroupVo">
+  	DELETE FROM tb_group
+  	WHERE GROIP_ID = #{group_id}
+  </delete>
+  
+    <select id="selectOneGroup" parameterType="com.barunsw.ojt.jmlee.day10.GroupVo" 
+  	resultType="com.barunsw.ojt.jmlee.day10.GroupVo">
+    SELECT * FROM tb_group WHERE GROUP_NAME = #{group_name}
+  </select>
+  
+</mapper>
