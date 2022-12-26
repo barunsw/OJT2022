@@ -12,10 +12,10 @@ public class TestThread extends Thread {
 		this.id = id;
 	}
 	
-	@Override
+	/*	@Override
 	public void run() {
 		for (int i = 0; i < 100; i++) {
 			LOGGER.debug(String.format("[%d]%d", id, i));
 		}
-	}
+	} */
 }
