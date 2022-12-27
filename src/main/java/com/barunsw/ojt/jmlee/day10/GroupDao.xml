@@ -5,12 +5,12 @@
 <mapper namespace="com.barunsw.ojt.jmlee.day10.GroupInterface">
   <select id="selectGroup" parameterType="com.barunsw.ojt.jmlee.day10.GroupVo" 
   	resultType="com.barunsw.ojt.jmlee.day10.GroupVo">
-    SELECT * FROM tb_group order by parent_group_id asc
+    SELECT * FROM tb_group order by parent_group_id ASC
   </select>
   
   <insert id="insertGroup" parameterType="com.barunsw.ojt.jmlee.day10.GroupVo">
   	INSERT INTO tb_group
-  	(GROIP_ID, GROUP_NAME, PARENT_GROUP_ID) 
+  	(GROUP_ID, GROUP_NAME, PARENT_GROUP_ID) 
   	VALUES (#{group_id}, #{group_name}, #{parent_group_id})
   </insert>
   
@@ -22,7 +22,7 @@
   
   <delete id="deleteGroup" parameterType="com.barunsw.ojt.jmlee.day10.GroupVo">
   	DELETE FROM tb_group
-  	WHERE GROIP_ID = #{group_id}
+  	WHERE GROUP_ID = #{group_id}
   </delete>
   
     <select id="selectOneGroup" parameterType="com.barunsw.ojt.jmlee.day10.GroupVo" 

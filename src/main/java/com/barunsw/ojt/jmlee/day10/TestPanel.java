@@ -24,9 +24,15 @@ import javax.swing.tree.TreePath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.barunsw.ojt.yhkim.day10.GroupBookVo;
+
+
 
 
 public class TestPanel extends JPanel {
+	
+	GroupVo groupVo = new GroupVo();
+	
 	private static final Logger LOGGER = LogManager.getLogger(TestPanel.class);
 
 	private GridBagLayout gridBagLayout = new GridBagLayout();
@@ -50,6 +56,7 @@ public class TestPanel extends JPanel {
 	private JButton jButton_Save = new JButton("저장");
 	private JButton jButton_Update = new JButton("수정");
 	private JButton jButton_Delete = new JButton("삭제");
+	private JButton jButton_Reset= new JButton("초기화");
 	
 	private JScrollPane jScrollPane_Tree = new JScrollPane();
 	
@@ -73,7 +80,7 @@ public class TestPanel extends JPanel {
 	}
 	
 	private void initAddressBookIf() throws Exception {
-		String className = SwingTest.properties.getProperty("address_if_class");
+		String className = SwingTest.properties.getProperty("group_if_class");
 		
 		LOGGER.debug("className:" + className);
 				
@@ -102,6 +109,17 @@ public class TestPanel extends JPanel {
 		jPanel_Main.setLayout(gridBagLayout);
 		jPanel_Top.setLayout(gridBagLayout);
 		jPanel_Bottom.setLayout(gridBagLayout);
+		
+		this.add(jScrollPane_Tree, new GridBagConstraints(0, 0, 1, 1,
+				1.0, 1.0,
+				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+				new Insets(5, 5, 5, 5),
+				0, 0));
+		this.add(jPanel_Main, new GridBagConstraints(1, 0, 1, 1,
+				0.6, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.BOTH, 
+				new Insets(5, 5, 5, 5),
+				0, 0));
 		
 		jPanel_Top.add(jLabel_group_name, new GridBagConstraints(0, 0, 1, 1,
 				0.2, 0.0,
@@ -150,6 +168,11 @@ public class TestPanel extends JPanel {
 				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 				new Insets(5, 5, 5, 5),
 				0, 0));
+		jPanel_Bottom.add(jButton_Reset, new GridBagConstraints(3, 0, 1, 1,
+				1.0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+				new Insets(5, 5, 5, 5),
+				0, 0));
 		
 		jPanel_Main.add(jPanel_Top, new GridBagConstraints(0, 0, 1, 1,
 				1.0, 0.0,
@@ -162,16 +185,6 @@ public class TestPanel extends JPanel {
 				new Insets(5, 5, 5, 5),
 				0, 0));
 		
-		this.add(jScrollPane_Tree, new GridBagConstraints(0, 0, 1, 1,
-				1.0, 1.0,
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-				new Insets(5, 5, 5, 5),
-				0, 0));
-		this.add(jPanel_Main, new GridBagConstraints(1, 0, 1, 1,
-				0.6, 0.0,
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH, 
-				new Insets(5, 5, 5, 5),
-				0, 0));
 		
 		jScrollPane_Tree.getViewport().add(jTree_Result);
 	}
@@ -180,7 +193,7 @@ public class TestPanel extends JPanel {
 		jTree_Result.setModel(treeModel);
 		treeModel.setRoot(rootNode);
 		// root노드 숨김
-		//jTree_Result.setRootVisible(true);
+		jTree_Result.setRootVisible(false);
 	}
 	
 	public void resetTree() {
@@ -220,59 +233,82 @@ public class TestPanel extends JPanel {
 		for (DefaultMutableTreeNode par : parent) {
 			rootNode.add(par);
 		}
-		treeModel.reload();
-		
+		treeModel.reload(); 
 	}
 	
 	private void initEvent() {
 		jButton_Save.addActionListener(new TestPanel_jButton_Save_ActionListener(this));
 		jButton_Delete.addActionListener(new TestPanel_jButton_Delete_ActionListener(this));
 		jButton_Update.addActionListener(new TestPanel_jButton_Update_ActionListener(this));
+		jButton_Reset.addActionListener(new TestPanel_jButton_Reset_ActionListener(this));
 		jTree_Result.addMouseListener(new TestPanel_jTree_Result_MouseAdapter(this));
 	}
 	
 	void jTree_Result_mouseReleased(MouseEvent e) {
 		//사용자가 tree를 클릭한 경로를 가져온다. 없을시 null
-		TreePath tp = jTree_Result.getPathForLocation(e.getX(), e.getY());
-
-		GroupVo msR = new GroupVo();
+		TreePath treePath = jTree_Result.getPathForLocation(e.getX(), e.getY());
 		
-		if (tp != null) {
-			jTextField_parent_group_id.setText((tp.getPath()[1].toString()));
-			if (tp.getPath().length > 2) {
-				msR.setGroup_name((tp.getPath()[2]).toString());
-				msR = addressBookIf.selectOneGroup(msR);
-				LOGGER.debug("msrrrrr----------23423432"+msR.toString());
-				jTextField_group_name.setText(msR.getGroup_id()+"");
-				jTextField_group_name.setText((tp.getPath()[2].toString()));
+		
+		//LOGGER.debug("dfdfdfdfdddddddd");
+		//LOGGER.debug(treePath);
+		//LOGGER.debug(treePath.getPath().length);
+		
+		if (treePath != null) {
+			LOGGER.debug("nulll 아님");
+
+			if (treePath.getPath().length > 2) { // path의 길이가 2보다 크면
+			LOGGER.debug("tp.getPath 1 : " + treePath);
+				groupVo.setGroup_name((treePath.getPath()[2]).toString());
+				jTextField_group_name.setText(groupVo.getGroup_name());
 			}
 			else {
-				jTextField_group_id.setText(null);
-				jTextField_group_name.setText("상위 그룹입니다.");
+				LOGGER.debug("else문 실행");
+				//상위 그룹 ID
+				
+				LOGGER.debug("tp.getPath 2 : " + treePath);
+				jTextField_group_name.setText(treePath.getPath()[1].toString());
+				groupVo.setGroup_name((treePath.getPath()[1]).toString());
 			}
-		}
-	
+			groupVo = addressBookIf.selectOneGroup(groupVo);
+
+			LOGGER.debug("treePath 3 :  " + treePath);
+			LOGGER.debug("treePath 4 :  " + treePath.getPath()[treePath.getPath().length-1]);
+			jTextField_group_id.setText(groupVo.getGroup_id()+"");
+			System.out.println(treePath.getPath()[treePath.getPath().length-1]);
+			jTextField_parent_group_id.setText((treePath.getPath()[1]).toString());			
+			
+//			jTextField_parent_group_id.setText();
+//			group.setGroup_name((treePath.getPath()[treePath.getPath().length-1]).toString());
+		}		
+		
 	}
 
 	public void jButton_Save_actionPerformed(ActionEvent e) {
-		String group = jTextField_group_name.getText();
-		String parentGroup = jTextField_parent_group_id.getText();
+		String group = jTextField_group_name.getText();				// 입력받는 그룹명
+		String parentGroup = jTextField_parent_group_id.getText(); 	//  입력받는 상위그룹명
 		
-		int num = 0;
-		if (!group.equals("")) {
-			GroupVo g = new GroupVo();
-			g.setGroup_name(parentGroup);
-			GroupVo g2 = new GroupVo();
-			num = g2.getGroup_id();
+		LOGGER.debug("group :  " + group);
+		LOGGER.debug("parentGroup :  " + parentGroup);
+		
+		int num = 0;			
+		if (!group.equals("")) {				// 그룹이 "" 이 아니라면
+			LOGGER.debug("if 실행");
+			groupVo.setGroup_name(parentGroup);	// g값을 해당객체의 상위그룹의 그룹명에 저장
+			GroupVo g = new GroupVo();			// 
+			num = g.getGroup_id();
+			LOGGER.debug("num :  " + num);
 		}
 		else {
+			LOGGER.debug("else 실행");
 			group = parentGroup;
 			num = 0;
+			LOGGER.debug("group :" + group + "parentGroup :" + parentGroup);
+
 		}
 		GroupVo oneGroup = new GroupVo();
 		oneGroup.setGroup_name(group);
 		oneGroup.setParent_group_id(num);
-		
+		LOGGER.debug("num :  " + num);
 		try {
 			addressBookIf.insertGroup(oneGroup);
 			resetTree();
@@ -286,12 +322,11 @@ public class TestPanel extends JPanel {
 	public void jButton_Delete_actionPerformed(ActionEvent e) {
 
 		String groupId = jTextField_group_id.getText();
-		
-		GroupVo g = new GroupVo();
-		g.setGroup_id(Integer.parseInt(groupId));
+
+		groupVo.setGroup_id(Integer.parseInt(groupId));
 		
 		try {
-			addressBookIf.deleteGroup(g);
+			addressBookIf.deleteGroup(groupVo);
 			resetTree();
 			textFieldReset();
 		}
@@ -306,12 +341,11 @@ public class TestPanel extends JPanel {
 		String groupId = jTextField_group_id.getText();
 		String groupName = jTextField_group_name.getText();
 		String parentGroup = jTextField_parent_group_id.getText();
+
+		groupVo.setGroup_name(parentGroup);
 		
-		GroupVo g = new GroupVo();
-		g.setGroup_name(parentGroup);
-		
-		GroupVo g2 = addressBookIf.selectOneGroup(g);
-		int num = g2.getGroup_id();
+		GroupVo g = addressBookIf.selectOneGroup(groupVo);
+		int num = g.getGroup_id();
 		
 		GroupVo oneGroup = new GroupVo();
 		oneGroup.setGroup_id(Integer.parseInt(groupId));
@@ -326,6 +360,11 @@ public class TestPanel extends JPanel {
 		} catch (Exception ex) {
 			LOGGER.error(ex.getMessage(), ex);
 		}
+	}
+
+	public void jButton_Reset_actionPerformed(ActionEvent e) {
+		textFieldReset();
+		resetTree();
 	}
 	
 }
@@ -380,6 +419,19 @@ class TestPanel_jButton_Update_ActionListener implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		adaptee.jButton_Update_Performed(e);		
+	}
+}
+
+class TestPanel_jButton_Reset_ActionListener implements ActionListener {
+	private TestPanel  adaptee;	
+	
+	public TestPanel_jButton_Reset_ActionListener(TestPanel adaptee) {
+		this.adaptee = adaptee;
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		adaptee.jButton_Reset_actionPerformed(e);
 	}
 }
 
