@@ -10,7 +10,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -21,6 +23,8 @@ import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.apache.logging.log4j.LogManager;
@@ -86,7 +90,7 @@ public class TestPanel extends JPanel {
 	
 	private void initComponent() throws Exception {
 		this.setLayout(gridBagLayout);		
-		
+				
 		jPanel_Right.setLayout(gridBagLayout);
 		jPanel_Search.setLayout(gridBagLayout);
 		jPanel_Button.setLayout(gridBagLayout);
@@ -195,7 +199,7 @@ public class TestPanel extends JPanel {
 	private void initTree() {
 		jTree_Result.setModel(treeModel);
 		// root노드 숨김
-		// jTree_Result.setRootVisible(false);
+		jTree_Result.setRootVisible(false);
 	}
 	
 	public void treeReset() {
@@ -204,7 +208,6 @@ public class TestPanel extends JPanel {
 	}
 	
 	private void initData() {
-	
 		List<GroupBookVo> groupBookList = groupBookIf.selectGroupBook(null);
 		Vector<DefaultMutableTreeNode> parents = new Vector<>();
 		
@@ -233,25 +236,73 @@ public class TestPanel extends JPanel {
 		}
 		
 		treeModel.reload();
+
+//		List<Map<String, String>> list = groupBookIf.selectLevel(null);
+//		int len = Integer.parseInt(String.valueOf(list.get(list.size()-1).get("level")));
+//						
+//		Vector<DefaultMutableTreeNode> parents = new Vector<>();
+//		
+//		for (int i = 1; i <=1; i++) {
+//			GroupBookVo oneGroup = new GroupBookVo();
+//			oneGroup.setGroup_id(Integer.parseInt(String.valueOf(list.get(i).get("group_id"))));
+//			oneGroup.setGroup_name(list.get(i).get("group_name"));
+//			oneGroup.setParent_group_id(Integer.parseInt(String.valueOf(list.get(i).get("parent_group_id"))));
+//			LOGGER.debug(oneGroup.toString());
+//			DefaultMutableTreeNode oneNode = new DefaultMutableTreeNode(oneGroup);
+//			
+//			GroupBookVo oneGroup2 = new GroupBookVo();
+//			oneGroup2.setGroup_id(Integer.parseInt(String.valueOf(list.get(3).get("group_id"))));
+//			oneGroup2.setGroup_name(list.get(3).get("group_name"));
+//			oneGroup2.setParent_group_id(Integer.parseInt(String.valueOf(list.get(3).get("parent_group_id"))));
+//			
+//			DefaultMutableTreeNode oneNode2 = new DefaultMutableTreeNode(oneGroup2);
+//			
+//			GroupBookVo oneGroup3 = new GroupBookVo();
+//			oneGroup3.setGroup_id(Integer.parseInt(String.valueOf(list.get(5).get("group_id"))));
+//			oneGroup3.setGroup_name(list.get(5).get("group_name"));
+//			oneGroup3.setParent_group_id(Integer.parseInt(String.valueOf(list.get(5).get("parent_group_id"))));
+//			
+//			DefaultMutableTreeNode oneNode3 = new DefaultMutableTreeNode(oneGroup3);
+//
+//			treeModel.insertNodeInto(oneNode3, oneNode2, 0);
+//			treeModel.insertNodeInto(oneNode2, oneNode, 0);
+//			treeModel.insertNodeInto(oneNode, rootNode, i-1);
+//		}		
+//		treeModel.reload();
 	}
 	
 	void jTree_Result_mouseReleased(MouseEvent e) {
+
 		TreePath tp = jTree_Result.getPathForLocation(e.getX(), e.getY());
-		GroupBookVo g = new GroupBookVo();
 
 		if(tp!=null) {
-			if(tp.getPath().length > 2) {
-				jTextField_Group.setText((tp.getPath()[2])+"");				 
-				g.setGroup_name((tp.getPath()[2]).toString()); // 그룹명의 id
-			} 
-			else { 
-				jTextField_Group.setText("상위 그룹입니다");
-				g.setGroup_name((tp.getPath()[1]).toString()); // 상위 그룹명의 id
+			int len = tp.getPath().length;
+			String group = "";
+			String groupId = "";
+			String parentGroup = "";
+
+			if ((tp.getPath()[0] == rootNode) && (len == 1)) {
+				group = "루트 그룹 입니다";
+			}
+			else {
+				if(len == 2) {
+					parentGroup = "상위 그룹 입니다";
+				} 
+				else { 
+					parentGroup = String.valueOf(tp.getPath()[len-2]);
+				}
+				
+				GroupBookVo g = new GroupBookVo();
+				g.setGroup_name(String.valueOf(tp.getPath()[len-1]));
+				g = groupBookIf.selectOneGroup(g);	
+				
+				group = String.valueOf(tp.getPath()[len-1]);
+				groupId = String.valueOf(g.getGroup_id());
 			}
 
-			g = groupBookIf.selectOneGroup(g);
-			jTextField_GroupId.setText(g.getGroup_id()+"");
-			jTextField_ParentGroup.setText((tp.getPath()[1]).toString());
+			jTextField_Group.setText(group);
+			jTextField_GroupId.setText(groupId);
+			jTextField_ParentGroup.setText(parentGroup);
 		}
 	}
 	
@@ -271,6 +322,8 @@ public class TestPanel extends JPanel {
 			g.setGroup_name(parentGroup);
 			GroupBookVo g2 = groupBookIf.selectOneGroup(g); // parentGroup의 group_id 구하기
 			num = g2.getGroup_id();
+			
+			LOGGER.debug(group + " , num : "+num);
 		}
 		else {
 			group = parentGroup;

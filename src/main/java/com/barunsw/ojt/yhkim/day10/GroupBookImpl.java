@@ -1,7 +1,10 @@
 package com.barunsw.ojt.yhkim.day10;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -97,5 +100,24 @@ public class GroupBookImpl implements GroupBookInterface {
 		
 		return g;
 	}
+
+	@Override
+	public List selectLevel(GroupBookVo paramData) {
+		List<Map<String, String>> list = new ArrayList<>();
+		
+		try (SqlSession session = sqlSessionFactory.openSession()) {
+			GroupBookInterface mapper = session.getMapper(GroupBookInterface.class);
+
+			list = mapper.selectLevel(new GroupBookVo());			
+
+		}
+		catch (Exception e) {
+			LOGGER.debug(e);
+		}
+		
+		return list;	
+
+	}
+
 
 }

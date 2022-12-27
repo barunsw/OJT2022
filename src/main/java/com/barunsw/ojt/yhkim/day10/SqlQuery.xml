@@ -29,4 +29,39 @@
      DELETE FROM TB_GROUP
      WHERE GROUP_ID=#{group_id} OR PARENT_GROUP_ID=#{group_id}
   </delete>
+  
+<resultMap type="HashMap" id="levelMap">
+  	<id column="group_id" property="group_id"/>
+  	<id column="parent_group_id" property="parent_group_id"/>
+  	<id column="group_name" property="group_name"/>
+  	<id column="level" property="level"/>
+  </resultMap>
+  
+  <select id="selectLevel" parameterType="com.barunsw.ojt.yhkim.day10.GroupBookVo"
+  	resultMap="levelMap">
+  	with recursive cte as (
+		select 
+			group_id,
+			group_name,
+			parent_group_id,
+			1 as level
+		from tb_group
+		where
+			parent_group_Id = #{parent_group_id}
+		union all 
+		select
+			p.group_id,
+			p.group_name,
+			p.parent_group_id,
+			1 + level as level
+		from tb_group p
+		inner join cte on p.parent_group_Id = cte.group_id
+	)
+	select 
+		group_id,
+		ifnull(parent_group_Id, 0) as parent_group_Id,
+		group_name,
+		level
+	from cte;
+  </select>
 </mapper>
