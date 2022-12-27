@@ -284,44 +284,36 @@ public class TestPanel extends JPanel {
 	}
 
 	public void jButton_Save_actionPerformed(ActionEvent e) {
-		String group = jTextField_group_name.getText();				// 입력받는 그룹명
-		String parentGroup = jTextField_parent_group_id.getText(); 	//  입력받는 상위그룹명
-		
-		LOGGER.debug("group :  " + group);
-		LOGGER.debug("parentGroup :  " + parentGroup);
-		
-		int num = 0;			
-		if (!group.equals("")) {				// 그룹이 "" 이 아니라면
-			LOGGER.debug("if 실행");
-			groupVo.setGroup_name(parentGroup);	// g값을 해당객체의 상위그룹의 그룹명에 저장
-			GroupVo g = new GroupVo();			// 
-			num = g.getGroup_id();
-			LOGGER.debug("num :  " + num);
-		}
-		else {
-			LOGGER.debug("else 실행");
-			group = parentGroup;
-			num = 0;
-			LOGGER.debug("group :" + group + "parentGroup :" + parentGroup);
+		// 입력값 호출
+		String groupId = jTextField_group_id.getText();
+		String groupName = jTextField_group_name.getText();
+		String parentGroup = jTextField_parent_group_id.getText();
 
-		}
+		groupVo.setGroup_name(parentGroup);
+		
+		// 부모정보 입력을 위한 기존정보 호출
+		GroupVo g = addressBookIf.selectOneGroup(groupVo);
+		int num = g.getGroup_id();
+		
+		// 추가될 객체 생성
 		GroupVo oneGroup = new GroupVo();
-		oneGroup.setGroup_name(group);
-		oneGroup.setParent_group_id(num);
-		LOGGER.debug("num :  " + num);
+		oneGroup.setGroup_id(Integer.parseInt(groupId));
+		oneGroup.setGroup_name(groupName);
+		oneGroup.setParent_group_id(num); // 노드 : 부모번호 == 자식번호
+	
 		try {
 			addressBookIf.insertGroup(oneGroup);
 			resetTree();
 			textFieldReset();
 		} catch (Exception ex) {
 			LOGGER.error(ex.getMessage(), ex);
-		}
+		} 
 		
 	}
 
 	public void jButton_Delete_actionPerformed(ActionEvent e) {
 
-		String groupId = jTextField_group_id.getText();
+		String groupId = jTextField_group_id.getText(); // 텍스트 필드의 그룹ID 호출
 
 		groupVo.setGroup_id(Integer.parseInt(groupId));
 		
