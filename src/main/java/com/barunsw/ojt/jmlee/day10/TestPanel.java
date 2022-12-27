@@ -242,7 +242,8 @@ public class TestPanel extends JPanel {
 			if (tp.getPath().length > 2) {
 				msR.setGroup_name((tp.getPath()[2]).toString());
 				msR = addressBookIf.selectOneGroup(msR);
-				jTextField_group_id.setText(msR.getGroup_id()+"");
+				LOGGER.debug("msrrrrr----------23423432"+msR.toString());
+				jTextField_group_name.setText(msR.getGroup_id()+"");
 				jTextField_group_name.setText((tp.getPath()[2].toString()));
 			}
 			else {
