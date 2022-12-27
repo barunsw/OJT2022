@@ -25,9 +25,6 @@ public class GroupImpl implements GroupInterface {
 			
 			groupBook = mapper.selectGroup(new GroupVo());
 			
-			for (GroupVo s : groupBook) {
-				LOGGER.debug(s.toString());
-			}
 		} catch (Exception ex) {
 			LOGGER.debug(ex.getMessage(), ex);
 		}
@@ -93,7 +90,7 @@ public class GroupImpl implements GroupInterface {
 			GroupInterface mapper = session.getMapper(GroupInterface.class);
 			groupList = mapper.selectOneGroup(paramData);
 		}
-		return null;
+		return groupList;
 	}
 
 }

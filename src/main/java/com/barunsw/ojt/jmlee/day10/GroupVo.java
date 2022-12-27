@@ -27,6 +27,7 @@ public class GroupVo implements Serializable {
 		this.parent_group_id = parent_group_id;
 	}
 	
+	@Override
 	public String toString() {
 		return String.format("%s", group_name);
 	}
