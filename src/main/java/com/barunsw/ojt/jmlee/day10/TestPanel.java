@@ -24,11 +24,6 @@ import javax.swing.tree.TreePath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.barunsw.ojt.yhkim.day10.GroupBookVo;
-
-
-
-
 public class TestPanel extends JPanel {
 	
 	GroupVo groupVo = new GroupVo();
