@@ -1,20 +1,19 @@
 package com.barunsw.ojt.yhkim.day13;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
-import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
@@ -57,6 +56,10 @@ public class DBExplorerPanel extends JPanel {
 	private JSplitPane jsp2 = new JSplitPane();
 		
 	private DBExplorerImpl dbImpl;
+	
+	private JPopupMenu jPopupMenu_Table = new JPopupMenu();
+	
+	private JMenuItem jMenuItem_Data = new JMenuItem("DATA");
 	 
 	public DBExplorerPanel() {
 		try {
@@ -64,6 +67,7 @@ public class DBExplorerPanel extends JPanel {
 			initComponent();
 			initTree();
 			initTreeData();
+			initMenu();
 			initEvent();
 		}
 		catch (Exception ex) {
@@ -76,19 +80,20 @@ public class DBExplorerPanel extends JPanel {
 	
 	private void initComponent() throws Exception {
 		this.setLayout(new BorderLayout());	
+		jPanel_Right.setLayout(new BorderLayout());
 		
 		jScrollPane_Tree.getViewport().add(jTree_Result);
 		jScrollPane_Table.getViewport().setView(jTable_Result);
 		jScrollPane_Table.setPreferredSize(new Dimension(400, 300));
 		
-		jPanel_Right.setBackground(Color.red);
-		jPanel_Search.setBackground(Color.blue);
+//		jPanel_Right.setBackground(Color.red);
+//		jPanel_Search.setBackground(Color.blue);
 
 		jPanel_Search.setLayout(gridBagLayout);	
 		
 		jPanel_Search.add(jButton_Save, 
 				new GridBagConstraints(0, 0, 1, 1,
-				1.0, 1.0,
+				1.0, 0.0,
 				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 				new Insets(5, 5, 5, 5),
 				0, 0));
@@ -102,7 +107,7 @@ public class DBExplorerPanel extends JPanel {
 
 		jPanel_Search.add(jTextField_Result, 
 						new GridBagConstraints(0, 2, 1, 1,
-						1.0, 1.0,
+						1.0, 0.0,
 						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 						new Insets(5, 5, 5, 5),
 						0, 0));
@@ -111,12 +116,14 @@ public class DBExplorerPanel extends JPanel {
 		jsp2.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		jsp2.setTopComponent(jPanel_Search);
 		jsp2.setBottomComponent(jScrollPane_Table);
+		jsp2.setOneTouchExpandable(true);
 
-		jPanel_Right.add(jsp2);
+		jPanel_Right.add(jsp2, BorderLayout.CENTER);
 
 		jsp.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
 		jsp.setLeftComponent(jScrollPane_Tree);
 		jsp.setRightComponent(jPanel_Right);
+		jsp.setOneTouchExpandable(true);
 		
 		jsp.setDividerLocation(250);
 
@@ -145,6 +152,12 @@ public class DBExplorerPanel extends JPanel {
 		
 	}
 	
+	private void initMenu() {
+		jPopupMenu_Table.add(jMenuItem_Data);
+		
+		//jPopupMenu_Table.show
+	}
+	
 	private void clearTable() {
 		tableModel = new CommonTableModel();
 		jTable_Result.setModel(tableModel);		
@@ -158,7 +171,7 @@ public class DBExplorerPanel extends JPanel {
 		jButton_Save.addActionListener(new DBExplorerPanel_jButton_Save_ActionListener(this));
 	}
 	
-	public void jButton_Save_actionPerformed(ActionEvent e) {
+	void jButton_Save_actionPerformed(ActionEvent e) {
 		String sql = jTextArea_Search.getText();
 		String msg = "";
 

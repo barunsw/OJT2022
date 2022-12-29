@@ -24,9 +24,9 @@ import com.barunsw.ojt.yhkim.day10.GroupBookVo;
 public class DBExplorerImpl {
 	private static Logger LOGGER = LoggerFactory.getLogger(DBExplorerImpl.class);
 	
-	private final static String URL = "jdbc:mysql://localhost:3306/OJT?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false";
+	private final static String URL = "jdbc:mysql://localhost:3306/BARUN_RENTAL?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false";
 	private final static String USER = "root";
-	private final static String PASSWD = "1234";
+	private final static String PASSWD = "real3817";
 
 	public DBExplorerImpl() throws Exception {
 		Class.forName("org.mariadb.jdbc.Driver");		

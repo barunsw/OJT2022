@@ -3,6 +3,8 @@ package com.barunsw.ojt.jmlee.day13;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -54,17 +56,18 @@ public class FileExplorerPanel extends JPanel {
 			initComponent();
 			initTree();
 			initTable();
-			initTableData();
 			initEvent();
 			initData(rootNode);
+			
+			String currentDirStr = System.getProperty("user.dir");
+			LOGGER.debug("currentDirStr:" + currentDirStr);
+			
+			initTableData(currentDirStr);
 		}
 		catch (Exception ex) {
 			LOGGER.error(ex.getMessage(), ex);
 		}
 	}
-	
-
-
 
 	private void initComponent() {
 		LOGGER.debug("initComponent");
@@ -91,30 +94,22 @@ public class FileExplorerPanel extends JPanel {
 		jSplitPane.setLeftComponent(jScrollPane_Tree);
 		
 		jSplitPane.setDividerLocation(200);
-		
-		jTree_FileTree.addMouseListener(null);
-		
-		
 	}
-		
 
 	private void initEvent() {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub		
+		jTree_FileTree.addMouseListener(new FileExplorerPanel_jTree_FileTree_MouseAdapter(this));
 	}
 
-	private void initTree() {
-		
+	private void initTree() {	
 		LOGGER.debug("rootNode" + rootNode);
 		treeModel.setRoot(rootNode);
 		jTree_FileTree.setModel(treeModel);
 		treeModel.reload();
-		
 	}
 	
 	private void initData(DefaultMutableTreeNode rootNode) {
 		// TODO Auto-generated method stub
-		
 	}
 	
 	private void initTable() {
@@ -129,30 +124,55 @@ public class FileExplorerPanel extends JPanel {
 		
 	}
 	
-	private void initTableData() {
+	private void initTableData(String pathDir) {
 		LOGGER.debug("initTableData");
 		Vector pathList = new Vector();
 		
-		String currentDirStr = System.getProperty("user.dir");
-		File currentDir = new File(currentDirStr);
-		currentDir.getParentFile();
+		File currentDir = new File(pathDir);
+//		currentDir.getParentFile();
 
 		File[] files = currentDir.listFiles(); 	// currentDir에 있는 파일 리스트 출력
 		for (File oneFile : files) {			// 불러온 파일리스트 oneFile로 오브젝트화
 			String lastModified = date.format(new Date(oneFile.lastModified()));
+			
 			Vector data = new Vector();			
 			data.add(oneFile.getName());
 			data.add(lastModified);
 			data.add((oneFile.isDirectory()?"폴더":"파일")); // ENUM 으로 대체할 예정
 			data.add(oneFile.length());
+			
 			pathList.add(data);
-
 		}
 	
 		tableModel.setData(pathList);			// 테이블 모델에 pathlist 셋팅
 		tableModel.fireTableDataChanged();
+	}	
+	
+	private void reloadTreeData() {
+		
 	}
 	
+	void jTree_FileTree_mouseReleased(MouseEvent e) {
+		Object o = jTree_FileTree.getLastSelectedPathComponent();
+		if (o instanceof DefaultMutableTreeNode) {
+			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)o;
+			Object userObject = selectedNode.getUserObject();
+			if (userObject instanceof FileVo) {
+				
+			}
+		}
+	}
 }
 
-
+class FileExplorerPanel_jTree_FileTree_MouseAdapter extends MouseAdapter {
+	private FileExplorerPanel adaptee;
+	
+	public FileExplorerPanel_jTree_FileTree_MouseAdapter(FileExplorerPanel adaptee) {
+		this.adaptee = adaptee;
+	}
+	
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		adaptee.jTree_FileTree_mouseReleased(e);
+	}
+}
