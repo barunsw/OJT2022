@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.io.File;
 
 import javax.swing.UIManager;
 
@@ -34,7 +35,7 @@ public class FileExplorerMain {
 		
 		frame.setLocation(new Point(xPos, yPos));	
 		frame.setVisible(true);
-
+		
 	}
 	
 }
