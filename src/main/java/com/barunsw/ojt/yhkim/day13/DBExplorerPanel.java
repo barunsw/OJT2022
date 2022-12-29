@@ -7,6 +7,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.Vector;
 
@@ -22,19 +24,17 @@ import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DBExplorerPanel extends JPanel {
 	private static Logger LOGGER = LoggerFactory.getLogger(DBExplorerPanel.class);
-	
-	private GridBagLayout gridBagLayout = new GridBagLayout();
-	
+		
 	private JPanel jPanel_Right = new JPanel();
 	private JPanel jPanel_Search = new JPanel();
-	//private JPanel jPanel_Result = new JPanel();
-	
+		
 	private JTextArea jTextArea_Search = new JTextArea(10, 7);
 	private JTextField jTextField_Result = new JTextField();
 	
@@ -47,13 +47,13 @@ public class DBExplorerPanel extends JPanel {
 	private JTree jTree_Result = new JTree();
 	private JTable jTable_Result = new JTable();
 	
-	private DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("OJT");
-	private DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
+	private DefaultMutableTreeNode rootNode;
+	private DefaultTreeModel treeModel;
 	
 	private CommonTableModel tableModel = new CommonTableModel();
 
-	private JSplitPane jsp = new JSplitPane();
-	private JSplitPane jsp2 = new JSplitPane();
+	private JSplitPane jSplitPane_Main = new JSplitPane();
+	private JSplitPane jSplitPane_Right = new JSplitPane();
 		
 	private DBExplorerImpl dbImpl;
 	
@@ -61,9 +61,9 @@ public class DBExplorerPanel extends JPanel {
 	
 	private JMenuItem jMenuItem_Data = new JMenuItem("DATA");
 	 
-	public DBExplorerPanel() {
+	public DBExplorerPanel(DBExplorerImpl dbImpl) {
 		try {
-			initDBIf();
+			initDBIf(dbImpl);
 			initComponent();
 			initTree();
 			initTreeData();
@@ -74,8 +74,9 @@ public class DBExplorerPanel extends JPanel {
 			LOGGER.error(ex.getMessage(), ex);
 		}
 	}
-	private void initDBIf() throws Exception {
-		dbImpl = new DBExplorerImpl();
+	
+	private void initDBIf(DBExplorerImpl dbImpl) throws Exception {
+		this.dbImpl = dbImpl;
 	}
 	
 	private void initComponent() throws Exception {
@@ -85,11 +86,8 @@ public class DBExplorerPanel extends JPanel {
 		jScrollPane_Tree.getViewport().add(jTree_Result);
 		jScrollPane_Table.getViewport().setView(jTable_Result);
 		jScrollPane_Table.setPreferredSize(new Dimension(400, 300));
-		
-//		jPanel_Right.setBackground(Color.red);
-//		jPanel_Search.setBackground(Color.blue);
 
-		jPanel_Search.setLayout(gridBagLayout);	
+		jPanel_Search.setLayout(new GridBagLayout());	
 		
 		jPanel_Search.add(jButton_Save, 
 				new GridBagConstraints(0, 0, 1, 1,
@@ -113,26 +111,26 @@ public class DBExplorerPanel extends JPanel {
 						0, 0));
 		jTextField_Result.setEditable(false);
 
-		jsp2.setOrientation(JSplitPane.VERTICAL_SPLIT);
-		jsp2.setTopComponent(jPanel_Search);
-		jsp2.setBottomComponent(jScrollPane_Table);
-		jsp2.setOneTouchExpandable(true);
+		jSplitPane_Right.setOrientation(JSplitPane.VERTICAL_SPLIT);
+		jSplitPane_Right.setTopComponent(jPanel_Search);
+		jSplitPane_Right.setBottomComponent(jScrollPane_Table);
+		jSplitPane_Right.setOneTouchExpandable(true);
 
-		jPanel_Right.add(jsp2, BorderLayout.CENTER);
+		jPanel_Right.add(jSplitPane_Right, BorderLayout.CENTER);
 
-		jsp.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-		jsp.setLeftComponent(jScrollPane_Tree);
-		jsp.setRightComponent(jPanel_Right);
-		jsp.setOneTouchExpandable(true);
-		
-		jsp.setDividerLocation(250);
+		jSplitPane_Main.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
+		jSplitPane_Main.setLeftComponent(jScrollPane_Tree);
+		jSplitPane_Main.setRightComponent(jPanel_Right);
+		jSplitPane_Main.setOneTouchExpandable(true);
+		jSplitPane_Main.setDividerLocation(250);
 
-		this.add(jsp, BorderLayout.CENTER);
+		this.add(jSplitPane_Main, BorderLayout.CENTER);
 	}
 	
 	private void initTree() {
+		rootNode = new DefaultMutableTreeNode(DBExplorerImpl.NAME);		
+		treeModel = new DefaultTreeModel(rootNode);
 		jTree_Result.setModel(treeModel);
-		// jTree_Result.setRootVisible(false);
 	}
 	
 	private void initTreeData() {
@@ -142,6 +140,7 @@ public class DBExplorerPanel extends JPanel {
 			List<String> tableColumns = dbImpl.selectColumnName(l);
 			
 			DefaultMutableTreeNode oneNode = new DefaultMutableTreeNode(l);
+			
 			for(String t : tableColumns) {
 				DefaultMutableTreeNode oneNode2 = new DefaultMutableTreeNode(t);
 				oneNode.add(oneNode2);
@@ -154,21 +153,12 @@ public class DBExplorerPanel extends JPanel {
 	
 	private void initMenu() {
 		jPopupMenu_Table.add(jMenuItem_Data);
-		
-		//jPopupMenu_Table.show
 	}
 	
-	private void clearTable() {
-		tableModel = new CommonTableModel();
-		jTable_Result.setModel(tableModel);		
-
-//		tableModel.setColumnData(null);
-//		tableModel.setData(null);
-//		tableModel.fireTableDataChanged();
-	}
-		
 	private void initEvent() {
 		jButton_Save.addActionListener(new DBExplorerPanel_jButton_Save_ActionListener(this));
+		jMenuItem_Data.addActionListener(new DBExplorerPanel_jMenuItem_Data_ActionListener(this));
+		jTree_Result.addMouseListener(new DBExplorerPanel_jTree_Result_MouseAdapter(this));
 	}
 	
 	void jButton_Save_actionPerformed(ActionEvent e) {
@@ -189,16 +179,21 @@ public class DBExplorerPanel extends JPanel {
 		jTextField_Result.setText(msg);
 	}
 	
+	private void clearTable() {
+		tableModel = new CommonTableModel();
+		jTable_Result.setModel(tableModel);		
+	}
+	
 	private void makeTable(Vector<List> v) {
 		tableModel = new CommonTableModel();
-
+		
 		Vector columns = new Vector();
 		
 		int cnt = v.get(0).size();
 		for (int i = 0; i < cnt; i++) {
 			columns.add(v.get(0).get(i));
 		}
-	
+		
 		tableModel.setColumnData(columns);
 		
 		Vector dataline = new Vector();
@@ -207,7 +202,25 @@ public class DBExplorerPanel extends JPanel {
 		}
 		
 		tableModel.setData(dataline);
-		jTable_Result.setModel(tableModel);		
+		jTable_Result.setModel(tableModel);	
+		jTable_Result.setRowHeight(30);
+	}
+	
+	void jMenuItem_Data_actionPerformed(ActionEvent e) {		
+		String table = jTree_Result.getLastSelectedPathComponent().toString();		
+		Vector<List> v = dbImpl.selectTable("SELECT * FROM "+table);		
+		jTextField_Result.setText(String.valueOf(v.size())+"개의 row를 출력했습니다.");
+		makeTable(v);			
+	}
+	
+	void jTree_Result_mouseReleased(MouseEvent e) {
+		TreePath tp = jTree_Result.getPathForLocation(e.getX(), e.getY());
+
+		if(tp!=null) {			
+			if(tp.getPathCount() == 2) {
+				jPopupMenu_Table.show(jTree_Result, e.getX(), e.getY());
+			}
+		}
 	}
 }
 
@@ -221,5 +234,31 @@ class DBExplorerPanel_jButton_Save_ActionListener implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		adaptee.jButton_Save_actionPerformed(e);
+	}
+}
+
+class DBExplorerPanel_jMenuItem_Data_ActionListener implements ActionListener {
+	private DBExplorerPanel  adaptee;	
+	
+	public DBExplorerPanel_jMenuItem_Data_ActionListener(DBExplorerPanel adaptee) {
+		this.adaptee = adaptee;
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		adaptee.jMenuItem_Data_actionPerformed(e);
+	}
+}
+
+class DBExplorerPanel_jTree_Result_MouseAdapter extends MouseAdapter {
+	private DBExplorerPanel adaptee;
+	
+	public DBExplorerPanel_jTree_Result_MouseAdapter(DBExplorerPanel adaptee) {
+		this.adaptee = adaptee;
+	}
+	
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		adaptee.jTree_Result_mouseReleased(e);
 	}
 }

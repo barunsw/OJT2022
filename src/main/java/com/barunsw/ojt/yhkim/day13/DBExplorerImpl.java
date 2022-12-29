@@ -1,35 +1,34 @@
 package com.barunsw.ojt.yhkim.day13;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 
-import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.barunsw.ojt.yhkim.day10.GroupBookInterface;
-import com.barunsw.ojt.yhkim.day10.GroupBookVo;
 
 public class DBExplorerImpl {
 	private static Logger LOGGER = LoggerFactory.getLogger(DBExplorerImpl.class);
 	
-	private final static String URL = "jdbc:mysql://localhost:3306/BARUN_RENTAL?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false";
-	private final static String USER = "root";
-	private final static String PASSWD = "real3817";
+	public static String NAME = "";
+	private static String URL = "";
+	private static String USER = "";
+	private static String PASSWD = "";
 
 	public DBExplorerImpl() throws Exception {
-		Class.forName("org.mariadb.jdbc.Driver");		
+		Class.forName("org.mariadb.jdbc.Driver");
+	}
+	
+	public void setInfo(String name, String id, String pw) {
+		NAME = name;
+		URL = "jdbc:mysql://localhost:3306/"+name+"?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false";
+		USER = id;
+		PASSWD = pw;
 	}
 
 	public List<String> selectTableName(){

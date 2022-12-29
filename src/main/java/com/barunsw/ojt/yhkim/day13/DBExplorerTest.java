@@ -3,10 +3,7 @@ package com.barunsw.ojt.yhkim.day13;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.io.Reader;
-import java.util.Properties;
 
-import org.apache.ibatis.io.Resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

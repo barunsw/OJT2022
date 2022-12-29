@@ -11,7 +11,10 @@ public class DBExplorerFrame extends JFrame {
 	public static final int WIDTH 	= 800;
 	public static final int HEIGHT 	= 600;
 	
-	private DBExplorerPanel dbExplorerPanel = new DBExplorerPanel();
+	private DBExplorerDialog dbExplorerDialog;
+	private DBExplorerImpl dbExplorerImpl;
+	private DBExplorerPanel dbExplorerPanel;
+
 	
 	public DBExplorerFrame() {
 		try {
@@ -21,11 +24,24 @@ public class DBExplorerFrame extends JFrame {
 			LOGGER.error(ex.getMessage(), ex);
 		}
 	}
-	
+
 	private void initComponent() throws Exception {
+		dbExplorerImpl = new DBExplorerImpl();
+		
+		dbExplorerDialog = new DBExplorerDialog(this);		
+		dbExplorerDialog.setSize(dbExplorerDialog.WIDTH, dbExplorerDialog.HEIGHT);
+		dbExplorerDialog.setLocationRelativeTo(null);
+		dbExplorerDialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		dbExplorerDialog.setVisible(true);	
+		
+		dbExplorerPanel = new DBExplorerPanel(dbExplorerImpl);
+		this.setContentPane(dbExplorerPanel);				
 		this.setTitle("﻿DB Explorer");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setContentPane(dbExplorerPanel);
+	}
+	
+	void setDBInfo(String name, String id, String pw) {
+		dbExplorerImpl.setInfo(name, id, pw);
 	}
 
 }
