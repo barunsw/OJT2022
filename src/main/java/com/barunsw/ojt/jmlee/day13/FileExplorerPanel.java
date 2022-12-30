@@ -169,11 +169,19 @@ public class FileExplorerPanel extends JPanel implements Runnable {
 			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) o;
 			Object userObject = selectedNode.getUserObject();
 			if (userObject instanceof FileVo) {
-
+					FileVo fileVo = (FileVo) userObject;
+					setFilePath(fileVo);
 			}
 		}
 	}
 
+	private void setFilePath(FileVo fileVo) {
+		File file = new File(fileVo.getFilepath());
+		LOGGER.debug("==========================file" + file);
+		jTextField_Path.setText(file.getAbsolutePath());
+
+	}
+	
 	class CreateChildNodes implements Runnable {
 
 		private DefaultMutableTreeNode root;
