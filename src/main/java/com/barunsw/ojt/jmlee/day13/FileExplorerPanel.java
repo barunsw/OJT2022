@@ -69,7 +69,6 @@ public class FileExplorerPanel extends JPanel implements Runnable {
          initTree();
          initTable();
          initEvent();
-         initData();
       } catch (Exception ex) {
          LOGGER.error(ex.getMessage(), ex);
       }
@@ -118,10 +117,6 @@ public class FileExplorerPanel extends JPanel implements Runnable {
       CreateChildNodes ccn = new CreateChildNodes(fileRoot, rootNode);
       new Thread(ccn).start();
    }
-
-   private void initData() {
-      // TODO Auto-generated method stub
-   }
    
    private void initTable() {
       Vector columns = new Vector();
@@ -155,118 +150,60 @@ public class FileExplorerPanel extends JPanel implements Runnable {
       tableModel.fireTableDataChanged();
    }
 
-   private void reloadTreeData() {
-   }
-   
    private void clearTableData() {
       tableModel.removeData();
       tableModel.fireTableDataChanged();
    }
 
-   void jTree_FileTree_mouseReleased(MouseEvent e) {
-      Object o = jTree_FileTree.getLastSelectedPathComponent();
-      if (o instanceof DefaultMutableTreeNode) {
-         DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) o;
-         Object userObject = selectedNode.getUserObject();
-         
-         LOGGER.debug(((FileNode) userObject).file.getAbsolutePath());
-         String filePath = ((FileNode) userObject).file.getAbsolutePath();
-         jTextField_Path.setText(filePath);
-                     
-         if (selectedNode.getChildCount() > 0) {
-            initTableData(filePath);
-         } 
-         else { 
-            clearTableData();
-         }
-       }
-   }
+	void jTree_FileTree_mouseReleased(MouseEvent e) {
+		Object o = jTree_FileTree.getLastSelectedPathComponent();
+		if (o instanceof DefaultMutableTreeNode) {
+			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) o;
+			Object userObject = selectedNode.getUserObject();
+
+			LOGGER.debug(((FileNode) userObject).getFile().getAbsolutePath());
+			String filePath = ((FileNode) userObject).getFile().getAbsolutePath();
+			jTextField_Path.setText(filePath);
+
+			if (selectedNode.getChildCount() > 0) {
+				initTableData(filePath);
+			} else {
+				clearTableData();
+			}
+		}
+	}
    
    void jTextField_Path_KeyAdpater(KeyEvent e) {   
       String filePath = jTextField_Path.getText();
       initTableData(filePath);
    }
 
-   class CreateChildNodes implements Runnable {
+	class ExplorerPanel_jTree_FileTree_MouseAdapter extends MouseAdapter {
+		private FileExplorerPanel adaptee;
 
-      private DefaultMutableTreeNode root;
+		public ExplorerPanel_jTree_FileTree_MouseAdapter(FileExplorerPanel adaptee) {
+			this.adaptee = adaptee;
+		}
 
-      private File fileRoot;
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			adaptee.jTree_FileTree_mouseReleased(e);
+		}
+	}
 
-      public CreateChildNodes(File fileRoot, DefaultMutableTreeNode root) {
-         this.fileRoot = fileRoot;
-         this.root = root;
-      }
+	class ExplorerPanel_jTextField_Path_KeyAdpater extends KeyAdapter {
+		private FileExplorerPanel adaptee;
 
-      @Override
-      public void run() {
-         createChildren(fileRoot, root);
-      }
+		public ExplorerPanel_jTextField_Path_KeyAdpater(FileExplorerPanel adaptee) {
+			this.adaptee = adaptee;
+		}
 
-      private void createChildren(File fileRoot, DefaultMutableTreeNode node) {
-         
-         File[] files = fileRoot.listFiles();   // root에서 파일 리스트를 가져옴
-         
-         if (files == null)                  // null이면 리턴
-            return;
-         for (File file : files) {
-            DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(new FileNode(file));
-            node.add(childNode);   
-            if (file.isDirectory()) {
-               createChildren(file, childNode);
-            }
-         }
-      }
-   }
+		public void keyPressed(KeyEvent e) {
+			int key = e.getKeyCode();
 
-   class FileNode {
-
-      private File file;
-
-      public FileNode(File file) {
-         this.file = file;
-      }
-
-      @Override
-      public String toString() {
-         
-         String name = file.getName();
-         
-         if (name.equals("")) {
-            return file.getAbsolutePath();
-         } else {
-            return name;
-         }
-      }
-   }
-}
-
-class ExplorerPanel_jTree_FileTree_MouseAdapter extends MouseAdapter {
-   private FileExplorerPanel adaptee;
-
-   public ExplorerPanel_jTree_FileTree_MouseAdapter(FileExplorerPanel adaptee) {
-      this.adaptee = adaptee;
-   }
-
-   @Override
-   public void mouseReleased(MouseEvent e) {
-      adaptee.jTree_FileTree_mouseReleased(e);
-   }
-}
-
-class ExplorerPanel_jTextField_Path_KeyAdpater extends KeyAdapter {
-   private FileExplorerPanel adaptee;
-
-   public ExplorerPanel_jTextField_Path_KeyAdpater(FileExplorerPanel adaptee) {
-      this.adaptee = adaptee;
-   }
-
-   public void keyPressed(KeyEvent e) {
-      int key = e.getKeyCode();
-      
-      if(key == KeyEvent.VK_ENTER) {
-         adaptee.jTextField_Path_KeyAdpater(e);
-      }
-   }
-
+			if (key == KeyEvent.VK_ENTER) {
+				adaptee.jTextField_Path_KeyAdpater(e);
+			}
+		}
+	}
 }
