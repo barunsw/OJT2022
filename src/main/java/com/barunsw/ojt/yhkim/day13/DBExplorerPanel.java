@@ -261,6 +261,8 @@ class DBExplorerPanel_jTree_Result_MouseAdapter extends MouseAdapter {
 	
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		adaptee.jTree_Result_mouseReleased(e);
+		if (e.getButton() == MouseEvent.BUTTON3) {
+			adaptee.jTree_Result_mouseReleased(e);
+		}
 	}
 }

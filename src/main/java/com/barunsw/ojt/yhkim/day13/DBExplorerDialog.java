@@ -13,7 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ public class DBExplorerDialog extends JDialog {
 	
 	private JTextField jTextField_Name = new JTextField();
 	private JTextField jTextField_Id = new JTextField();
-	private JTextField jTextField_Pw = new JTextField();
+	private JPasswordField jPasswordField_Pw = new JPasswordField();
 	
 	private JButton jButton_Save = new JButton("접속");
 	
@@ -64,7 +64,7 @@ public class DBExplorerDialog extends JDialog {
 
 		jLabel_Pw.setPreferredSize(new Dimension(50, 30));
 		jLabel_Pw.setHorizontalAlignment(JLabel.CENTER);
-		jTextField_Pw.setPreferredSize(new Dimension(100, 30));
+		jPasswordField_Pw.setPreferredSize(new Dimension(100, 30));
 
 		this.add(jLabel_Name, 
 				new GridBagConstraints(0, 0, 1, 1,
@@ -96,7 +96,7 @@ public class DBExplorerDialog extends JDialog {
 				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 				new Insets(5, 5, 5, 5),
 				0, 0));
-		this.add(jTextField_Pw, 
+		this.add(jPasswordField_Pw, 
 				new GridBagConstraints(1, 2, 1, 1,
 				1.0, 0.0,
 				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
@@ -118,7 +118,7 @@ public class DBExplorerDialog extends JDialog {
 	void jButton_Save_actionPerformed(ActionEvent e) {
 		String name = jTextField_Name.getText();
 		String id = jTextField_Id.getText();
-		String pw = jTextField_Pw.getText();
+		String pw = jPasswordField_Pw.getText();
 		
 		frame.setDBInfo(name, id, pw);
 		
