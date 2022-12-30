@@ -50,4 +50,9 @@ public class CommonTableModel extends AbstractTableModel {
 		}	
 		return null;
 	}
+
+	public void removeData() {
+		data.clear();
+		
+	}
 }

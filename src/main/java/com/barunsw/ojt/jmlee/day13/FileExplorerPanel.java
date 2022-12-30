@@ -5,6 +5,8 @@ import java.io.File;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -12,7 +14,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
@@ -26,225 +30,243 @@ import org.slf4j.LoggerFactory;
 
 public class FileExplorerPanel extends JPanel implements Runnable {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(FileExam.class);
+   private static Logger LOGGER = LoggerFactory.getLogger(FileExam.class);
 
-	private GridBagLayout gridBagLayout = new GridBagLayout();
+   private GridBagLayout gridBagLayout = new GridBagLayout();
 
-	// 프레임 설정
-	private JPanel jPanel_Main = new JPanel();
-	private JScrollPane jScrollPane_Tree = new JScrollPane();
-	private JScrollPane jScrollPane_Table = new JScrollPane();
-	private JSplitPane jSplitPane = new JSplitPane();
+   // 프레임 설정
+   private JPanel jPanel_Main = new JPanel();
+   private JScrollPane jScrollPane_Tree = new JScrollPane();
+   private JScrollPane jScrollPane_Table = new JScrollPane();
+   private JSplitPane jSplitPane = new JSplitPane();
 
-	// 컴포넌트
-	private JTree jTree_FileTree = new JTree();
-	private JTable jTable_FileTable = new JTable();
-	private CommonTableModel tableModel = new CommonTableModel();
+   // 컴포넌트
+   private JTree jTree_FileTree = new JTree();
+   private JTable jTable_FileTable = new JTable();
+   private CommonTableModel tableModel = new CommonTableModel();
 
-	// 텍스트 필드
-	private JTextField jTextField_Path = new JTextField();
+   // 텍스트 필드
+   private JTextField jTextField_Path = new JTextField();
 
-	// 트리 생성
+   // 트리 생성
 //   private DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(
 //         new FileVo("C:", "", "", new File("/").getAbsolutePath()));
 //   
 //   private DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
 
-	private DefaultMutableTreeNode root;
+   private DefaultMutableTreeNode rootNode;
 
-	private DefaultTreeModel treeModel;
+   private DefaultTreeModel treeModel;
 
-	private JTree tree;
 
-	// 날짜 포멧
-	private static SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+   // 날짜 포멧
+   private static SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-	public FileExplorerPanel() {
-		try {
-			run();
-			initComponent();
-			initTree();
-			initTable();
-			initEvent();
-			initData();
+   public FileExplorerPanel() {
+      try {
+         run();
+         initComponent();
+         initTree();
+         initTable();
+         initEvent();
+         initData();
+      } catch (Exception ex) {
+         LOGGER.error(ex.getMessage(), ex);
+      }
+   }
 
-			String currentDirStr = System.getProperty("user.dir");
-			LOGGER.debug("currentDirStr:" + currentDirStr);
+   private void initComponent() {
+      LOGGER.debug("initComponent");
+      this.setLayout(gridBagLayout);
+      jPanel_Main.setLayout(gridBagLayout);
 
-			initTableData(currentDirStr);
-		} catch (Exception ex) {
-			LOGGER.error(ex.getMessage(), ex);
-		}
-	}
+      this.add(jPanel_Main, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+            GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+      this.add(jSplitPane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
+            GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 0));
+      jPanel_Main.add(jTextField_Path, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
+            GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 
-	private void initComponent() {
-		LOGGER.debug("initComponent");
-		this.setLayout(gridBagLayout);
-		jPanel_Main.setLayout(gridBagLayout);
+      jScrollPane_Table.getViewport().add(jTable_FileTable);
+      jScrollPane_Tree.getViewport().add(jTree_FileTree);
 
-		this.add(jPanel_Main, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-		this.add(jSplitPane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 5, 5, 5), 0, 0));
-		jPanel_Main.add(jTextField_Path, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+      jSplitPane.setRightComponent(jScrollPane_Table);
+      jSplitPane.setLeftComponent(jScrollPane_Tree);
+      jSplitPane.setOneTouchExpandable(true);
 
-		jScrollPane_Table.getViewport().add(jTable_FileTable);
-		jScrollPane_Tree.getViewport().add(tree);
+      jSplitPane.setDividerLocation(200);
+   }
 
-		jSplitPane.setRightComponent(jScrollPane_Table);
-		jSplitPane.setLeftComponent(jScrollPane_Tree);
-		jSplitPane.setOneTouchExpandable(true);
+   private void initEvent() {
+      jTree_FileTree.addMouseListener(new ExplorerPanel_jTree_FileTree_MouseAdapter(this));
+      jTextField_Path.addKeyListener(new ExplorerPanel_jTextField_Path_KeyAdpater(this));
+   }
 
-		jSplitPane.setDividerLocation(200);
-	}
+   private void initTree() {
 
-	private void initEvent() {
-		// TODO Auto-generated method stub
-		jTree_FileTree.addMouseListener(new ExplorerPanel_jTree_FileTree_MouseAdapter(this));
-	}
+   }
 
-	private void initTree() {
+   @Override
+   public void run() {
+      File fileRoot = new File("C:/");
+      rootNode = new DefaultMutableTreeNode(new FileNode(fileRoot));
+      treeModel = new DefaultTreeModel(rootNode);
 
-	}
+      jTree_FileTree = new JTree(treeModel);
+      jTree_FileTree.setShowsRootHandles(true);
 
-	@Override
-	public void run() {
-		File fileRoot = new File("C:/");
-		root = new DefaultMutableTreeNode(new FileNode(fileRoot));
-		treeModel = new DefaultTreeModel(root);
+      CreateChildNodes ccn = new CreateChildNodes(fileRoot, rootNode);
+      new Thread(ccn).start();
+   }
 
-		tree = new JTree(treeModel);
-		tree.setShowsRootHandles(true);
+   private void initData() {
+      // TODO Auto-generated method stub
+   }
+   
+   private void initTable() {
+      Vector columns = new Vector();
+      columns.add("이름");
+      columns.add("수정한 날짜");
+      columns.add("유형");
+      columns.add("크기");
 
-		CreateChildNodes ccn = new CreateChildNodes(fileRoot, root);
-		new Thread(ccn).start();
-	}
+      tableModel.setColumnData(columns);
+      jTable_FileTable.setModel(tableModel);
+   }
 
-	private void initData() {
-		// TODO Auto-generated method stub
-	}
+   private void initTableData(String pathDir) {
+      Vector pathList = new Vector();
+      File currentDir = new File(pathDir);
+      File[] files = currentDir.listFiles(); // currentDir에 있는 파일 리스트 출력
 
-	private void initTable() {
-		Vector columns = new Vector();
-		columns.add("이름");
-		columns.add("수정한 날짜");
-		columns.add("유형");
-		columns.add("크기");
+      for (File oneFile : files) { // 불러온 파일리스트 oneFile로 오브젝트화
+         String lastModified = date.format(new Date(oneFile.lastModified()));
 
-		tableModel.setColumnData(columns);
-		jTable_FileTable.setModel(tableModel);
-	}
+         Vector data = new Vector();
+         data.add(oneFile.getName());
+         data.add(lastModified);
+         data.add((oneFile.isDirectory() ? "폴더" : "파일")); // ENUM 으로 대체할 예정
+         data.add(oneFile.length());
 
-	private void initTableData(String pathDir) {
-		LOGGER.debug("initTableData");
-		Vector pathList = new Vector();
+         pathList.add(data);
+      }
+      
+      tableModel.setData(pathList); // 테이블 모델에 pathlist 셋팅
+      tableModel.fireTableDataChanged();
+   }
 
-		File currentDir = new File(pathDir);
-//      currentDir.getParentFile();
+   private void reloadTreeData() {
+   }
+   
+   private void clearTableData() {
+      tableModel.removeData();
+      tableModel.fireTableDataChanged();
+   }
 
-		File[] files = currentDir.listFiles(); // currentDir에 있는 파일 리스트 출력
-		for (File oneFile : files) { // 불러온 파일리스트 oneFile로 오브젝트화
-			String lastModified = date.format(new Date(oneFile.lastModified()));
+   void jTree_FileTree_mouseReleased(MouseEvent e) {
+      Object o = jTree_FileTree.getLastSelectedPathComponent();
+      if (o instanceof DefaultMutableTreeNode) {
+         DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) o;
+         Object userObject = selectedNode.getUserObject();
+         
+         LOGGER.debug(((FileNode) userObject).file.getAbsolutePath());
+         String filePath = ((FileNode) userObject).file.getAbsolutePath();
+         jTextField_Path.setText(filePath);
+                     
+         if (selectedNode.getChildCount() > 0) {
+            initTableData(filePath);
+         } 
+         else { 
+            clearTableData();
+         }
+       }
+   }
+   
+   void jTextField_Path_KeyAdpater(KeyEvent e) {   
+      String filePath = jTextField_Path.getText();
+      initTableData(filePath);
+   }
 
-			Vector data = new Vector();
-			data.add(oneFile.getName());
-			data.add(lastModified);
-			data.add((oneFile.isDirectory() ? "폴더" : "파일")); // ENUM 으로 대체할 예정
-			data.add(oneFile.length());
+   class CreateChildNodes implements Runnable {
 
-			pathList.add(data);
-		}
-		tableModel.setData(pathList); // 테이블 모델에 pathlist 셋팅
-		tableModel.fireTableDataChanged();
-	}
+      private DefaultMutableTreeNode root;
 
-	private void reloadTreeData() {
+      private File fileRoot;
 
-	}
+      public CreateChildNodes(File fileRoot, DefaultMutableTreeNode root) {
+         this.fileRoot = fileRoot;
+         this.root = root;
+      }
 
-	void jTree_FileTree_mouseReleased(MouseEvent e) {
-		Object o = jTree_FileTree.getLastSelectedPathComponent();
-		if (o instanceof DefaultMutableTreeNode) {
-			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) o;
-			Object userObject = selectedNode.getUserObject();
-			if (userObject instanceof FileVo) {
-					FileVo fileVo = (FileVo) userObject;
-					setFilePath(fileVo);
-			}
-		}
-	}
+      @Override
+      public void run() {
+         createChildren(fileRoot, root);
+      }
 
-	private void setFilePath(FileVo fileVo) {
-		File file = new File(fileVo.getFilepath());
-		LOGGER.debug("==========================file" + file);
-		jTextField_Path.setText(file.getAbsolutePath());
+      private void createChildren(File fileRoot, DefaultMutableTreeNode node) {
+         
+         File[] files = fileRoot.listFiles();   // root에서 파일 리스트를 가져옴
+         
+         if (files == null)                  // null이면 리턴
+            return;
+         for (File file : files) {
+            DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(new FileNode(file));
+            node.add(childNode);   
+            if (file.isDirectory()) {
+               createChildren(file, childNode);
+            }
+         }
+      }
+   }
 
-	}
-	
-	class CreateChildNodes implements Runnable {
+   class FileNode {
 
-		private DefaultMutableTreeNode root;
+      private File file;
 
-		private File fileRoot;
+      public FileNode(File file) {
+         this.file = file;
+      }
 
-		public CreateChildNodes(File fileRoot, DefaultMutableTreeNode root) {
-			this.fileRoot = fileRoot;
-			this.root = root;
-		}
-
-		@Override
-		public void run() {
-			createChildren(fileRoot, root);
-		}
-
-		private void createChildren(File fileRoot, DefaultMutableTreeNode node) {
-			
-			File[] files = fileRoot.listFiles();	// root에서 파일 리스트를 가져옴
-			
-			if (files == null)						// null이면 리턴
-				return;
-			for (File file : files) {
-				DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(new FileNode(file));
-				node.add(childNode);	
-				if (file.isDirectory()) {
-					createChildren(file, childNode);
-				}
-			}
-		}
-	}
-
-	class FileNode {
-
-		private File file;
-
-		public FileNode(File file) {
-			this.file = file;
-		}
-
-		@Override
-		public String toString() {
-			
-			String name = file.getName();
-			
-			if (name.equals("")) {
-				return file.getAbsolutePath();
-			} else {
-				return name;
-			}
-		}
-	}
+      @Override
+      public String toString() {
+         
+         String name = file.getName();
+         
+         if (name.equals("")) {
+            return file.getAbsolutePath();
+         } else {
+            return name;
+         }
+      }
+   }
 }
 
 class ExplorerPanel_jTree_FileTree_MouseAdapter extends MouseAdapter {
-	private FileExplorerPanel adaptee;
+   private FileExplorerPanel adaptee;
 
-	public ExplorerPanel_jTree_FileTree_MouseAdapter(FileExplorerPanel adaptee) {
-		this.adaptee = adaptee;
-	}
+   public ExplorerPanel_jTree_FileTree_MouseAdapter(FileExplorerPanel adaptee) {
+      this.adaptee = adaptee;
+   }
 
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		adaptee.jTree_FileTree_mouseReleased(e);
-	}
+   @Override
+   public void mouseReleased(MouseEvent e) {
+      adaptee.jTree_FileTree_mouseReleased(e);
+   }
+}
+
+class ExplorerPanel_jTextField_Path_KeyAdpater extends KeyAdapter {
+   private FileExplorerPanel adaptee;
+
+   public ExplorerPanel_jTextField_Path_KeyAdpater(FileExplorerPanel adaptee) {
+      this.adaptee = adaptee;
+   }
+
+   public void keyPressed(KeyEvent e) {
+      int key = e.getKeyCode();
+      
+      if(key == KeyEvent.VK_ENTER) {
+         adaptee.jTextField_Path_KeyAdpater(e);
+      }
+   }
+
 }
