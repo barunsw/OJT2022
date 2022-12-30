@@ -20,7 +20,7 @@ class CreateChildNodes implements Runnable {
        createChildren(fileRoot, root);
     }
 
-    private void createChildren(File fileRoot, DefaultMutableTreeNode node) {
+    public void createChildren(File fileRoot, DefaultMutableTreeNode node) {
        
        File[] files = fileRoot.listFiles();   // root에서 파일 리스트를 가져옴
        

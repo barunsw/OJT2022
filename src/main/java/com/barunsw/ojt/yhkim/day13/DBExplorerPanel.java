@@ -214,13 +214,15 @@ public class DBExplorerPanel extends JPanel {
 	}
 	
 	void jTree_Result_mouseReleased(MouseEvent e) {
-		TreePath tp = jTree_Result.getPathForLocation(e.getX(), e.getY());
+//		if (e.getModifiersEx() == MouseEvent.BUTTON3_DOWN_MASK) {
+			TreePath tp = jTree_Result.getPathForLocation(e.getX(), e.getY());
 
-		if(tp!=null) {			
-			if(tp.getPathCount() == 2) {
-				jPopupMenu_Table.show(jTree_Result, e.getX(), e.getY());
+			if (tp != null) {			
+				if (tp.getPathCount() == 2) {
+					jPopupMenu_Table.show(jTree_Result, e.getX(), e.getY());
+				}
 			}
-		}
+//		}
 	}
 }
 

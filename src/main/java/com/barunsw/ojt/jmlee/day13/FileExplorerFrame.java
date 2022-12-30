@@ -43,7 +43,7 @@ public class FileExplorerFrame extends JFrame {
 		}
 	}
 
-		class FileExplorerFrame_this_WindowAdapter extends WindowAdapter {
+	class FileExplorerFrame_this_WindowAdapter extends WindowAdapter {
 		private FileExplorerFrame adaptee;
 		
 		public FileExplorerFrame_this_WindowAdapter(FileExplorerFrame adaptee) {
