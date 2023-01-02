@@ -44,22 +44,21 @@ public class FileExplorerPanel extends JPanel {
 	private JTextField jTextField_Path = new JTextField();
 
 	// 트리 생성
-	//   private DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(
-	//         new FileVo("C:", "", "", new File("/").getAbsolutePath()));
-	//   
-	//   private DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
+	// private DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(
+	// new FileVo("C:", "", "", new File("/").getAbsolutePath()));
+	//
+	// private DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
 
 	private DefaultMutableTreeNode rootNode;
 
 	private DefaultTreeModel treeModel;
-
 
 	// 날짜 포멧
 	private static SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	public FileExplorerPanel() {
 		try {
-			//run();
+			// run();
 			initComponent();
 			initTree();
 			initTable();
@@ -102,14 +101,14 @@ public class FileExplorerPanel extends JPanel {
 
 		treeModel = new DefaultTreeModel(rootNode);
 
-		//jTree_FileTree = new JTree(treeModel);
+		// jTree_FileTree = new JTree(treeModel);
 		jTree_FileTree.setModel(treeModel);
-		//jTree_FileTree.setShowsRootHandles(true);
+		// jTree_FileTree.setShowsRootHandles(true);
 
-		//		CreateChildNodes ccn = new CreateChildNodes(fileRoot, rootNode);
-		//		ccn.createChildren(fileRoot, rootNode);
+		// CreateChildNodes ccn = new CreateChildNodes(fileRoot, rootNode);
+		// ccn.createChildren(fileRoot, rootNode);
 //		initTreeData(rootNode);
-		
+
 //		jTree_FileTree.updateUI();
 	}
 
@@ -123,7 +122,7 @@ public class FileExplorerPanel extends JPanel {
 		parentTreeNode.removeAllChildren();
 
 		// UserObject인 FileVo를 가지고 온다.
-		FileNode fileNode = (FileNode)parentTreeNode.getUserObject();
+		FileNode fileNode = (FileNode) parentTreeNode.getUserObject();
 
 		// FileVo의 경로를 가지고 자식 디렉토리를 구한다.
 		File file = fileNode.getFile();
@@ -190,7 +189,7 @@ public class FileExplorerPanel extends JPanel {
 			jTextField_Path.setText(filePath);
 
 			initTreeData(selectedNode);
-			
+
 			if (selectedNode.getChildCount() > 0) {
 				initTableData(filePath);
 			} else {
@@ -199,7 +198,7 @@ public class FileExplorerPanel extends JPanel {
 		}
 	}
 
-	void jTextField_Path_KeyAdpater(KeyEvent e) {   
+	void jTextField_Path_KeyAdpater(KeyEvent e) {
 		String filePath = jTextField_Path.getText();
 		initTableData(filePath);
 	}
