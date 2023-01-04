@@ -4,6 +4,10 @@
   "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
   <properties resource = "db.properties"/>
+<!-- 카멜 표기법 설정 매핑 -->
+  <settings>
+  	<setting name="mapUnderscoreToCamelCase" value="true" />
+  </settings>
 <!-- DB 환경을 위한 설정 -->
   <environments default="development">
     <environment id="development">

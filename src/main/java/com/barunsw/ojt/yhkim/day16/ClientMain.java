@@ -40,12 +40,21 @@ public class ClientMain {
 			
 			// DELETE
 			AddressBookVo deleteAddress = new AddressBookVo();
-			deleteAddress.setSeqNum(192);
+			deleteAddress.setSeqNum(192); 
 //			addressBookIf.deleteAddressBook(deleteAddress);
 			
 			// SELETE
-			List<AddressBookVo> addressBookList = addressBookIf.selectAddressBook(new AddressBookVo());
+			// 값을 주지 않을 때는 전체 리스트, seqNum에 값을 주면 그에 맞는 vo를 가져옴
+			AddressBookVo selectAddress = new AddressBookVo();
+			List<AddressBookVo> addressBookList = addressBookIf.selectAddressBook(selectAddress);
 			for (AddressBookVo oneAddressVo : addressBookList) {
+				LOGGER.debug(oneAddressVo.toString());
+			}
+			
+			AddressBookVo selectOneAddress = new AddressBookVo();
+			selectOneAddress.setSeqNum(205);
+			List<AddressBookVo> addressBookList2 = addressBookIf.selectAddressBook(selectOneAddress);
+			for (AddressBookVo oneAddressVo : addressBookList2) {
 				LOGGER.debug(oneAddressVo.toString());
 			}
 
