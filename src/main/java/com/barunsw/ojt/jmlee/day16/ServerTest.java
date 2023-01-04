@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 public class ServerTest {
 	private static final Logger LOGGER = LogManager.getLogger(ServerTest.class);
 	
-	public static final int PORT = 5000;
+	public static final int PORT = 5001;
 	
 	public static void main(String[] args) throws Exception {
 		LOGGER.debug("+++ initServer");

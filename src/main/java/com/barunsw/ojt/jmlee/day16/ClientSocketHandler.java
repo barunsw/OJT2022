@@ -21,6 +21,9 @@ public class ClientSocketHandler extends Thread {
 	
 	private BookInterface addressBookIf = new SwingAddressBookImpl();
 	
+	private final int KEY = 0;
+	private final int VALUE = 1;
+	
 	public ClientSocketHandler(Socket clientSocket) throws Exception {
 
 		this.clientSocket = clientSocket;	// 서버에서 사용할 인터페이스 구현체를 받는다
@@ -32,10 +35,13 @@ public class ClientSocketHandler extends Thread {
 		String[] paramList = paramStr.split(",");
 		for (String oneParam : paramList) {
 			String[] oneParamData = oneParam.split("=");
-			String key = oneParamData[0].trim();
-			String val = oneParamData[1].trim();
-			
+			String key = oneParamData[KEY].trim();
+			String val = oneParamData[VALUE].trim();//상수로 선언해서
+					
 			switch (key) {
+			case "SEQNUM":
+				addressBookVo.setSeqNum(Integer.parseInt(val));
+				break;
 			case "NAME":
 				addressBookVo.setName(val);
 				break;
@@ -53,7 +59,6 @@ public class ClientSocketHandler extends Thread {
 				break;
 			}
 		}
-		
 		return addressBookVo;
 	}
 	
@@ -66,27 +71,33 @@ public class ClientSocketHandler extends Thread {
 			
 			String readLine = null;
 			while ((readLine = reader.readLine()) != null) {
-				LOGGER.debug(String.format("+++ readLine:%s", readLine));
+				LOGGER.debug(String.format("========= readLine:%s", readLine));
 				
-				String[] cmdSplit = readLine.split(":");
+				String[] cmdSplit = readLine.split(":"); // : 로 명령어를 구분
 				
-				CmdType cmd = CmdType.getCmdType(cmdSplit[0]);
+				CmdType cmd = CmdType.getCmdType(cmdSplit[KEY]); // 명령어
 				switch (cmd) {
 				case SELECT:
-					handleSelect();
 					writer.write(handleSelect()+"\n");
 					writer.flush();
+					break;
+				case SELECTONE:
+					AddressBookVo addressBookVo = parseCmd(cmdSplit[VALUE]); // 데이터 값
+					writer.write(handleOneSelect(addressBookVo));
+					writer.flush();
+					break;
 				case INSERT:
-					AddressBookVo addressBookVo = parseCmd(cmdSplit[1]);
-					handleInsert(addressBookVo);
+					addressBookVo = parseCmd(cmdSplit[VALUE]);
+					handleInsert(addressBookVo); 
 					break;
 				case UPDATE:
-					addressBookVo = parseCmd(cmdSplit[1]);
+					addressBookVo = parseCmd(cmdSplit[VALUE]);
 					handleUpdate(addressBookVo);
 					break;
 				case DELETE:
-					addressBookVo = parseCmd(cmdSplit[1]);
+					addressBookVo = parseCmd(cmdSplit[VALUE]);
 					handleDelete(addressBookVo);
+					break;
 				}
 			}
 		}
@@ -97,19 +108,27 @@ public class ClientSocketHandler extends Thread {
 		LOGGER.debug("ClientSocketHandler 종료");
 	}
 
-
 	private String handleSelect() throws Exception {
 		List<AddressBookVo> addressbookList = addressBookIf.selectAddressList(new AddressBookVo());
 		StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append("SELECT");
 		for (AddressBookVo addressBook : addressbookList) {
-			stringBuffer
-			.append("NAME = " + addressBook.getName() + ",")
-			.append("BIRTHDAY = " + addressBook.getBirthday() + ",")
-			.append("GENDER = " + addressBook.getGender() + ",")
-			.append("PHONENUMBER = " + addressBook.getPhoneNumber() + ",")
-			.append("ADDRESS = " + addressBook.getAddress() + "&");
-			
+			stringBuffer.append(String.format("NAME=%s,BIRTHDAY=%s,GENDER=%s,PHONENUMBER=%s,ADDRESS=%s;",
+												addressBook.getName(),addressBook.getBirthday(),addressBook.getGender(),
+												addressBook.getPhoneNumber(),addressBook.getAddress()));
+		}
+		LOGGER.debug(stringBuffer.toString());
+		return stringBuffer.toString();
+	}
+	
+	private String handleOneSelect(AddressBookVo addressBookVo) throws Exception {
+		List<AddressBookVo> addressbookList = addressBookIf.selectOneAddress(addressBookVo);
+		StringBuffer stringBuffer = new StringBuffer();
+		stringBuffer.append("SELECTONE");
+		for (AddressBookVo addressBook : addressbookList) {
+			stringBuffer.append(String.format("NAME=%s,BIRTHDAY=%s,GENDER=%s,PHONENUMBER=%s,ADDRESS=%s;",
+												addressBook.getName(),addressBook.getBirthday(),addressBook.getGender(),
+												addressBook.getPhoneNumber(),addressBook.getAddress()));
 		}
 		LOGGER.debug(stringBuffer.toString());
 		return stringBuffer.toString();

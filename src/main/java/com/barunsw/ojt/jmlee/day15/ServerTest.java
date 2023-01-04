@@ -36,7 +36,6 @@ public class ServerTest {
 		catch (Exception ex) {
 			LOGGER.error(ex.getMessage());
 		}
-		
 		LOGGER.debug("+++ server end");
 	}
 	

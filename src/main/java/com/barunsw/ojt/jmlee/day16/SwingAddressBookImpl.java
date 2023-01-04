@@ -17,46 +17,64 @@ public class SwingAddressBookImpl implements BookInterface {
 	
 	@Override
 	public List<AddressBookVo> selectAddressList(AddressBookVo addressBookVo) throws Exception {
-		
+
 		List<AddressBookVo> addressBooklist = new ArrayList<>();
-		
+
 		try (SqlSession session = sqlSessionFactory.openSession()) {
 			BookInterface mapper = session.getMapper(BookInterface.class);
-			
-				addressBooklist = mapper.selectAddressList(new AddressBookVo());
-			
+
+			addressBooklist = mapper.selectAddressList(new AddressBookVo());
+
 			for (AddressBookVo s : addressBooklist) {
 				LOGGER.debug(s.toString());
 			}
-//			for (int i = 0; i < addressBooklist.size(); i++) {
-//				LOGGER.debug(String.format("[%d]%s", i, addressBooklist.get(i)));
-//			}
+
 		} catch (Exception ex) {
 			LOGGER.debug(ex.getMessage(), ex);
 		}
 		return addressBooklist;
 	}
+	
+	@Override
+	public List<AddressBookVo> selectOneAddress(AddressBookVo addressBookVo) throws Exception {
+
+		List<AddressBookVo> addressBooklist = new ArrayList<>();
+
+		try (SqlSession session = sqlSessionFactory.openSession()) {
+			BookInterface mapper = session.getMapper(BookInterface.class);
+
+			addressBooklist = mapper.selectOneAddress(addressBookVo);
+
+			for (AddressBookVo s : addressBooklist) {
+				LOGGER.debug(s.toString());
+			}
+
+		} catch (Exception ex) {
+			LOGGER.debug(ex.getMessage(), ex);
+		}
+		return addressBooklist;
+
+	}
 
 	public int insertAddress(AddressBookVo addressBookVo) throws Exception {
-		int result = 0;
+
 		try (SqlSession session = sqlSessionFactory.openSession()) {
-			System.out.println("insert 호출");
+			LOGGER.debug("insert 호출");
 			BookInterface mapper = session.getMapper(BookInterface.class);
 			
 			mapper.insertAddress(addressBookVo);
-			
 			session.commit();
-			System.out.println("insert end");	
+			LOGGER.debug("insert end");	
 		}
 		catch (Exception ex) {
 			LOGGER.debug(ex.getMessage(), ex);
 		}
-		return result;
+		return 0;
 	}
 
 	@Override
 	public int updateAddress(AddressBookVo addressBookVo) throws Exception {
-		int result = 0;
+		
 		try (SqlSession session = sqlSessionFactory.openSession()) {
 			LOGGER.debug("update 호출");
 			BookInterface mapper = session.getMapper(BookInterface.class);
@@ -68,12 +86,12 @@ public class SwingAddressBookImpl implements BookInterface {
 		catch (Exception ex) {
 			LOGGER.debug(ex.getMessage(), ex);
 		}
-		return result;
+		return 0;
 	}
 
 	@Override
 	public int deleteAddress(AddressBookVo addressBookVo) throws Exception {
-		int result = 0;
+		
 		try (SqlSession session = sqlSessionFactory.openSession()) {
 			LOGGER.debug("Delete 호출");
 			BookInterface mapper = session.getMapper(BookInterface.class);
@@ -85,7 +103,7 @@ public class SwingAddressBookImpl implements BookInterface {
 		catch (Exception ex) {
 			LOGGER.debug(ex.getMessage(), ex);
 		}
-		return result;
+		return 0;
 	}
 
 }

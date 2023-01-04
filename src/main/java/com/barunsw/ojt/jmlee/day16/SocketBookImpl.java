@@ -22,59 +22,28 @@ public class SocketBookImpl implements BookInterface {
 	private BufferedReader reader;
 	private BufferedWriter writer;
 	
+	private final int KEY = 0;
+	private final int VALUE = 1;
+	
 	public SocketBookImpl(String host, int port) throws Exception {
 		clientSocket = new Socket(host, port);		
 		reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-		writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));		
+		writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));	
+		LOGGER.debug("==================== 소켓 생성 ================ " + clientSocket);
 	}
-	
-	@Override
-	public List<AddressBookVo> selectAddressList(AddressBookVo addressBookVo) throws Exception {
-
-			String command = String.format("SELECT\n");
-			
-			writer.write(command);
-			writer.flush();
-			
-			StringBuffer buf = new StringBuffer();
-			String readLine = null;
-			
-			while ((readLine = reader.readLine()) != null) {
-				if (readLine.startsWith("SELECT")) {
-					buf.append(readLine + "\n");
-					break;
-				}
-			}
-			LOGGER.debug("received:" + readLine);
-
-			List<AddressBookVo> addressList = new ArrayList<>();
-			String data[] = buf.toString().split("&");
-			
-			for (String read : data) {
-				LOGGER.debug("read:" + read);
-				AddressBookVo address = parseCmd(read);
-				addressList.add(address);
-				LOGGER.debug("addressList:" + addressList);
-
-			}
-			LOGGER.debug("addressList:" + addressList);
-
-			return addressList;
-			
-		}
 	
 	private AddressBookVo parseCmd(String paramStr) throws Exception {
 		AddressBookVo addressVo = new AddressBookVo();
-
-		String[] paramList = paramStr.split(",");
-
+		
+		String[] paramList = paramStr.split(",");	// ,로 컬럼 정보 가져옴
 		for (String oneParam : paramList) {
-			String[] oneParamData = oneParam.split("=");
-			String key = oneParamData[0].trim();
-			String val = oneParamData[1].trim();
-
+			String[] oneParamData = oneParam.split("="); 
+			String key = oneParamData[KEY].trim(); // 열 정보
+			String val = oneParamData[VALUE].trim(); // 데이터 값
+			
 			switch (key) {
-			case "SELECT:NAME": //첫 이름은 SELECT가 붙어있어서 이렇게 찾아줘야하는 듯
+			case "SEQNUM":
+				addressVo.setSeqNum(Integer.parseInt(val));
 			case "NAME":
 				addressVo.setName(val);
 				break;
@@ -94,6 +63,68 @@ public class SocketBookImpl implements BookInterface {
 		return addressVo;
 	}
 	
+	@Override
+	public List<AddressBookVo> selectAddressList(AddressBookVo addressBookVo) throws Exception {
+			String command = String.format("SELECT\n");
+			
+			writer.write(command);
+			writer.flush();
+			
+			StringBuffer buf = new StringBuffer();
+			String readLine = null;
+			
+			while ((readLine = reader.readLine()) != null) {	
+				if (readLine.startsWith("SELECT")) {		
+					buf.append(readLine + "\n");
+					break;
+				}
+			}
+			LOGGER.debug("received:" + readLine); //write한 값을 readline으로 한줄로 가져옴
+
+			List<AddressBookVo> addressList = new ArrayList<>();
+			String data[] = buf.toString().split(";");	// buf에 담긴 값들을 ; 로 나누고 data에 넣음
+			
+			for (String read : data) {
+				LOGGER.debug("read:" + read);
+				AddressBookVo address = parseCmd(read);
+				addressList.add(address);
+			}
+
+			return addressList;
+			
+		}
+	
+	@Override
+	public List<AddressBookVo> selectOneAddress(AddressBookVo addressBookVo) throws Exception {
+		String command = String.format("SELECTONE:SEQNUM=%s\n",addressBookVo.getSeqNum());
+		
+		writer.write(command);
+		LOGGER.debug("command : " + command);
+		writer.flush();
+		
+		StringBuffer buf = new StringBuffer();
+		String readLine = null;
+
+		while ((readLine = reader.readLine()) != null) {	
+			if (readLine.startsWith("SELECTONE")) {		
+				buf.append(readLine + "\n");
+				break;
+			}
+		}
+		LOGGER.debug("received:" + readLine); 
+
+		List<AddressBookVo> addressList = new ArrayList<>();
+		String data[] = buf.toString().split(";");	
+		
+		for (String read : data) {
+			LOGGER.debug("read:" + read);
+			AddressBookVo address = parseCmd(read);
+			addressList.add(address);
+		}
+
+		return addressList;
+		
+	}
 
 	@Override
 	public int insertAddress(AddressBookVo addressBookVo) throws Exception {
@@ -102,13 +133,9 @@ public class SocketBookImpl implements BookInterface {
 				addressBookVo.getPhoneNumber(), addressBookVo.getAddress());
 
 		LOGGER.debug("command:" + command);
-		
 		writer.write(command);
-
 		LOGGER.debug("writer.write()");
-		
 		writer.flush();
-		
 		LOGGER.debug("writer.flush()");
 		
 		return 0;
@@ -116,8 +143,8 @@ public class SocketBookImpl implements BookInterface {
 
 	@Override
 	public int updateAddress(AddressBookVo addressBookVo) throws Exception {
-		String command = String.format("UPDATE:NAME=%s, BIRTHDAY=%s, GENDER=%s, PHONENUMBER=%s, ADDRESS=%s\n", 
-				addressBookVo.getName(), addressBookVo.getBirthday(), addressBookVo.getGender(),
+		String command = String.format("UPDATE:SEQNUM=%s,NAME=%s,BIRTHDAY=%s,GENDER=%s,PHONENUMBER=%s,ADDRESS=%s\n", 
+				addressBookVo.getSeqNum(), addressBookVo.getName(), addressBookVo.getBirthday(), addressBookVo.getGender(),
 				addressBookVo.getPhoneNumber(), addressBookVo.getAddress());
 
 		writer.write(command);
@@ -128,7 +155,7 @@ public class SocketBookImpl implements BookInterface {
 
 	@Override
 	public int deleteAddress(AddressBookVo addressBookVo) throws Exception {
-		String command = String.format("DELETE:NAME=%s", addressBookVo.getName());
+		String command = String.format("DELETE:SEQNUM=%s\n", addressBookVo.getSeqNum());
 
 		writer.write(command);
 		writer.flush();
@@ -136,7 +163,4 @@ public class SocketBookImpl implements BookInterface {
 		return 0;
 	}
 
-	public void close() {
-		
-	}
 }
