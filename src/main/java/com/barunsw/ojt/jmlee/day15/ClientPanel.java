@@ -7,9 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -34,27 +31,26 @@ public class ClientPanel extends JPanel {
 	private JTextField jTextField_Chat = new JTextField();	 	// 채팅 입력
 	private JButton jButton_Send = new JButton("전송");			// 전송버튼
 	
-	private Socket socket;
-	
-	private ObjectInputStream objectInputStream = null;
-	private ObjectOutputStream objectOutputStream = null;
+	private ClientImpl clientImpl;
 	
 	private String user;
+	private String message;
 	
 	public ClientPanel() {
-		initUser();
-		initComponent();
-		initEvent();
 		try {
-		socket = new Socket("Localhost", ServerSocketTest.PORT);
-		objectInputStream = new ObjectInputStream(socket.getInputStream());
-		objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-		receiveThread();
+			clientImpl = new ClientImpl(this);
+			start();
+			initUser();
+			initComponent();
+			initEvent();
 		}
 		catch (Exception ex) {
 			LOGGER.debug(ex.getMessage(), ex);
 		}
 		
+	}
+	private void start() {
+		clientImpl.run();
 	}
 	
 	private void initUser() {
@@ -63,27 +59,7 @@ public class ClientPanel extends JPanel {
 			if (user.length() == 0 || user == null) {
 				System.exit(0);		// 입력 없으면 강제종료
 			}
-	}
-
-	private void receiveThread() {
-		new Thread() {
-			@Override
-			public void run() {
-				ChatVo chatVo = null;
-				LOGGER.debug("receiveThread");	
-				try {
-					while (true) {
-						if ((chatVo = (ChatVo)objectInputStream.readObject()) != null) {
-							jTextArea_Chat.append(chatVo.toString());
-							jScrollPane_Chat.getVerticalScrollBar().setValue(jScrollPane_Chat.getVerticalScrollBar().getMaximum());
-						}
-					}
-				}
-				catch (Exception e) {
-					LOGGER.error(e.getMessage(), e);
-				} 
-			}
-		}.start();		
+		clientImpl.send(user + "이(가) 입장하였습니다. ");
 	}
 
 	private void initEvent() {
@@ -91,15 +67,14 @@ public class ClientPanel extends JPanel {
 		jButton_Send.addActionListener(new ClientPanel_jButton_Send_MouseAdapter(this));
 	}
 	
-	private void sendMessage(ChatVo message) {
-		LOGGER.debug("sendMessage");
-		try {
-			objectOutputStream.writeObject(message);
-			objectOutputStream.flush();
-		}
-		catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-		}
+	private void sendMessage() {
+		message = jTextField_Chat.getText();
+		clientImpl.send(user + " : " + message);
+		jTextField_Chat.setText(null);
+	}
+	
+	void receive(String message) {
+		jTextArea_Chat.append(message + "\n"); 
 	}
 
 	private void initComponent() {
@@ -107,7 +82,6 @@ public class ClientPanel extends JPanel {
 				
 		jTextArea_Chat.setEditable(false);
 		jTextField_User.setText(user);
-		jTextField_Chat.setText("메세지를 입력하세요");
 		
 		this.add(jScrollPane_Chat, 
 				new GridBagConstraints(0, 0, 3, 1,
@@ -139,12 +113,12 @@ public class ClientPanel extends JPanel {
 	}
 	
 	public void jButton_Send_actionPerformed(ActionEvent e) {
-		sendMessage(null);
+		sendMessage();
 	}
 
 	public void jTextField_Chat_KeyListener(KeyEvent e) {
 		if(e.getKeyCode() == KeyEvent.VK_ENTER) {
-			sendMessage(null);
+		sendMessage();
 		}
 	}
 	

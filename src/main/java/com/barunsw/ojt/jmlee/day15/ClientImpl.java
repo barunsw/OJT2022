@@ -8,14 +8,17 @@ import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ClientSocketTest {
-	private static Logger LOGGER = LoggerFactory.getLogger(ClientSocketTest.class);
+public class ClientImpl {
+	
+	private static Logger LOGGER = LoggerFactory.getLogger(ClientImpl.class);
 	private InputStream inputStream;
+	private OutputStream outputStream;
 	private ClientPanel clientPanel;
+	
 	Socket socket;
 	Thread inputThread;
-	
-	public ClientSocketTest(ClientPanel panel) {
+
+	public ClientImpl(ClientPanel panel) {
 		clientPanel = panel;
 	}
 	
@@ -24,7 +27,7 @@ public class ClientSocketTest {
 		
 		try {
 			socket = new Socket();
-			socket.connect(new InetSocketAddress("localhost", ServerSocketTest.PORT));
+			socket.connect(new InetSocketAddress("localhost", ServerTest.PORT));
 			
 			inputStream = socket.getInputStream();
 			
@@ -33,11 +36,11 @@ public class ClientSocketTest {
 				public void run() {
 					try {
 						byte[] buf = new byte[1024];
-
 						int readNum = 0;
 						while ((readNum = inputStream.read(buf)) > 0) {
 							String readData = new String(buf, 0, readNum);
 							LOGGER.debug("readData:" + readData);
+							clientPanel.receive(readData);
 						}
 					}
 					catch (Exception ex) {
@@ -62,7 +65,7 @@ public class ClientSocketTest {
 				@Override
 				public void run() {
 					try { 
-					OutputStream outputStream = socket.getOutputStream();
+					outputStream = socket.getOutputStream();
 					outputStream.write(message.getBytes());
 					outputStream.flush();
 				}
