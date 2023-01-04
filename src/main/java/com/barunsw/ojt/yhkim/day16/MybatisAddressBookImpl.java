@@ -16,17 +16,17 @@ public class MybatisAddressBookImpl implements AddressBookInterface {
 	private static SqlSessionFactory sqlSessionFactory = SqlSessionFactoryManager.getSqlSessionFactory();
 
 	@Override
-	public List<AddressBookVo> selectAddressBook(AddressBookVo paramData) {
-		
+	public List<AddressBookVo> selectAddressBook(AddressBookVo paramData) {		
 		List<AddressBookVo> addressBookList = new ArrayList<>();
 		
 		try (SqlSession session = sqlSessionFactory.openSession()) {
 			AddressBookInterface mapper = session.getMapper(AddressBookInterface.class);
-			addressBookList = mapper.selectAddressBook(new AddressBookVo());
+			addressBookList = mapper.selectAddressBook(paramData);
 		}
 		catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
+		
 		return addressBookList;
 	}
 

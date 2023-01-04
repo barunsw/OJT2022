@@ -1,8 +1,9 @@
 package com.barunsw.ojt.yhkim.day15;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,14 +17,14 @@ public class ClientSocketHandler extends Thread {
 	private static List<ClientSocketHandler> clientRepo = new ArrayList<ClientSocketHandler>();
 	
 	private Socket socket;
-	private InputStream inputStream;
-	private OutputStream outputStream;	
+	private BufferedReader reader;
+	private BufferedWriter writer;	
 	
 	public ClientSocketHandler(Socket socket) throws Exception {
 		this.socket = socket;
-		
-		inputStream = socket.getInputStream();
-		outputStream = socket.getOutputStream();
+				
+		reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));		
 		
 		clientRepo.add(this);
 	}
@@ -31,15 +32,9 @@ public class ClientSocketHandler extends Thread {
 	@Override
 	public void run() {
 		try {
-			byte[] buf = new byte[1024];
-			
-			int readNum = 0;
-			while ((readNum = inputStream.read(buf)) > 0) {
-				chkRepo();
-				
-				String readData = new String(buf, 0, readNum);
-				LOGGER.debug("readData: " + readData);
-				ClientSocketHandler.sendAll(readData);
+			String readLine = null;
+			while ((readLine = reader.readLine()) != null ) {
+				ClientSocketHandler.sendAll(readLine);
 			}
 		}
 		catch (Exception ex) {
@@ -49,8 +44,8 @@ public class ClientSocketHandler extends Thread {
 	
 	public void sendMessage(String message) {
 		try {
-			outputStream.write(message.getBytes());
-			outputStream.flush();
+			writer.write(message+"\n");
+			writer.flush();
 		}
 		catch (Exception ex) {
 			LOGGER.error(ex.getMessage(), ex);
@@ -58,17 +53,13 @@ public class ClientSocketHandler extends Thread {
 	}
 	
 	public static void sendAll(String message) {
-		for (ClientSocketHandler clientHandler : clientRepo) {
-				clientHandler.sendMessage(message);				
-		}
-	}
-	
-	public static void chkRepo() {
 		for (int i = 0; i< clientRepo.size(); i++) {
 			if (!clientRepo.get(i).isAlive()) {
 				clientRepo.remove(i);
 			}
+			else {
+				clientRepo.get(i).sendMessage(message);
+			}
 		}
-		LOGGER.debug("{}", clientRepo);
 	}
 }

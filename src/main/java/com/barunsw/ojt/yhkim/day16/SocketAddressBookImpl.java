@@ -24,6 +24,9 @@ public class SocketAddressBookImpl implements AddressBookInterface {
 	private BufferedReader reader;
 	private BufferedWriter writer;
 
+	private static final int KEY = 0;
+	private static final int VALUE = 1;
+	
 	public SocketAddressBookImpl(String host, int port) throws Exception {
 		clientSocket = new Socket(host, port);
 
@@ -36,8 +39,8 @@ public class SocketAddressBookImpl implements AddressBookInterface {
 		String[] paramList = paramStr.split(",");
 		for (String oneParam : paramList) {
 			String[] oneParamData = oneParam.split("=");
-			String key = oneParamData[0].trim();
-			String val = oneParamData[1].trim();
+			String key = oneParamData[KEY].trim();
+			String val = oneParamData[VALUE].trim();
 
 			switch (key) {
 			case "SEQNUM":
@@ -66,7 +69,7 @@ public class SocketAddressBookImpl implements AddressBookInterface {
 
 	@Override
 	public List<AddressBookVo> selectAddressBook(AddressBookVo paramData) {
-		String command = String.format("SELECT\n");
+		String command = String.format("SELECT:SEQNUM=%s\n", paramData.getSeqNum());
 
 		List<AddressBookVo> addressBookList = new ArrayList<>();
 
@@ -82,7 +85,7 @@ public class SocketAddressBookImpl implements AddressBookInterface {
 				break;
 			}		
 			
-			LOGGER.debug("received:" + buf.toString());
+			LOGGER.debug(String.format("received: %s", buf.toString()));
 
 			String[] bufSplit = buf.toString().split(";");
 			for(int i = 0; i < bufSplit.length; i++) {

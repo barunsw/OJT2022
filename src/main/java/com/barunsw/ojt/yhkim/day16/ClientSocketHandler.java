@@ -75,11 +75,12 @@ public class ClientSocketHandler extends Thread {
 				CmdType cmd = CmdType.getCmdType(cmdSplit[0]);
 				switch (cmd) {
 				case SELECT:
-					writer.write(handleSelect()+"\n");
+					AddressBookVo addressBookVo = parseCmd(cmdSplit[1]);
+					writer.write(handleSelect(addressBookVo)+"\n");
 					writer.flush();
 					break;
 				case INSERT:
-					AddressBookVo addressBookVo = parseCmd(cmdSplit[1]);
+					addressBookVo = parseCmd(cmdSplit[1]);
 					handleInsert(addressBookVo);
 					break;
 				case UPDATE:
@@ -100,12 +101,13 @@ public class ClientSocketHandler extends Thread {
 		LOGGER.debug("--- ClientSocketHandler run");
 	}
 	
-	private String handleSelect() throws Exception {
+	private String handleSelect(AddressBookVo addressBookVo) throws Exception {
 		StringBuffer buf = new StringBuffer();
-
-		List<AddressBookVo> addressBookList = addressBookIf.selectAddressBook(new AddressBookVo());
+		List<AddressBookVo> addressBookList = addressBookIf.selectAddressBook(addressBookVo);
 		for (AddressBookVo b : addressBookList) {
-			buf.append("SEQNUM="+b.getSeqNum()+",NAME="+b.getName()+",BIRTHDAY="+b.getBirthday()+",GENDER="+b.getGender()+",PHONENUMBER="+b.getPhoneNumber()+",ADDRESS="+b.getAddress()+";");
+			LOGGER.debug(b.toString());
+			buf.append(String.format("SEQNUM=%s,NAME=%s,BIRTHDAY=%s,GENDER=%s,PHONENUMBER=%s,ADDRESS=%s;"
+					, b.getSeqNum(), b.getName(), b.getBirthday(), b.getGender(), b.getPhoneNumber(), b.getAddress()));
 		}
 		
 		LOGGER.debug(buf.toString());
