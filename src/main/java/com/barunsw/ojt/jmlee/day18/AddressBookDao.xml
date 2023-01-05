@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.barunsw.ojt.jmlee.day18.RMIBookInterface">
+
+  <select id="selectAddressList" parameterType="com.barunsw.ojt.jmlee.day18.AddressBookVo" 
+  	resultType="com.barunsw.ojt.jmlee.day18.AddressBookVo">
+    SELECT * FROM TB_ADDRESSBOOK
+  </select>
+  
+  <insert id="insertAddress" parameterType="com.barunsw.ojt.jmlee.day18.AddressBookVo">
+  	INSERT INTO TB_ADDRESSBOOK
+  	(name, birthday, gender, phoneNumber, address) 
+  	VALUES (#{name}, #{birthday}, #{gender}, #{phoneNumber}, #{address})
+  </insert>
+  
+  <update id="updateAddress" parameterType="com.barunsw.ojt.jmlee.day18.AddressBookVo">
+  	UPDATE TB_ADDRESSBOOK
+  	SET name = #{name}, birthday=#{birthday}, gender=#{gender}, phoneNumber=#{phoneNumber}, address=#{address} 
+  	WHERE seqNum = #{seqNum}
+  </update>
+  
+  <delete id="deleteAddress" parameterType="com.barunsw.ojt.jmlee.day18.AddressBookVo">
+  	DELETE FROM TB_ADDRESSBOOK
+  	WHERE seqNum = #{seqNum}
+  </delete> 
+  
+</mapper>

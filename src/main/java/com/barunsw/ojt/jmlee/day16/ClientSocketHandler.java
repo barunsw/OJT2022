@@ -83,7 +83,7 @@ public class ClientSocketHandler extends Thread {
 					break;
 				case SELECTONE:
 					AddressBookVo addressBookVo = parseCmd(cmdSplit[VALUE]); // 데이터 값
-					writer.write(handleOneSelect(addressBookVo));
+					writer.write(handleOneSelect(addressBookVo)+"\n");
 					writer.flush();
 					break;
 				case INSERT:

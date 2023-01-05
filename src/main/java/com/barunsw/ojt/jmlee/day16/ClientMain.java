@@ -25,11 +25,11 @@ public class ClientMain {
 			AddressBookVo addressbookVo = new AddressBookVo();
 			
 			//SELECT ONE
-//			addressbookVo.setSeqNum(1);
-//			addressBookIf.selectOneAddress(addressbookVo);
+			addressbookVo.setSeqNum(1);
+			addressBookIf.selectOneAddress(addressbookVo);
 			
 			// SELECT
-			addressBookIf.selectAddressList(addressbookVo);
+//			addressBookIf.selectAddressList(addressbookVo);
 			
 			// INSERT
 //			addressbookVo.setName("가나다");
