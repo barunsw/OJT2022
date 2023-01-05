@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.barunsw.ojt.yhkim.day18.AddressBookInterface">
+	<select id="selectAddressList" parameterType="com.barunsw.ojt.vo.AddressBookVo" 
+		resultType="com.barunsw.ojt.vo.AddressBookVo">
+		SELECT
+			SEQ_NUM, NAME, BIRTHDAY, GENDER, PHONE_NUMBER, ADDRESS
+		FROM
+     		TB_ADDRESS
+     	<if test="seqNum != 0">
+     		WHERE
+     			SEQ_NUM = #{seqNum}
+        </if>           
+    </select>
+    
+	<insert id="insertAddress" parameterType="com.barunsw.ojt.vo.AddressBookVo">
+		INSERT INTO TB_ADDRESS (
+			  NAME
+			, BIRTHDAY
+			, GENDER
+			, PHONE_NUMBER
+			, ADDRESS
+		) VALUES (
+			  #{name}
+			, #{birthday}
+			, #{gender}
+			, #{phoneNumber}
+			, #{address}
+		)
+	</insert>
+	
+	<update id="updateAddress" parameterType="com.barunsw.ojt.vo.AddressBookVo">
+		UPDATE 
+			TB_ADDRESS
+		SET
+			  NAME         = #{name}
+			, BIRTHDAY     = #{birthday}
+			, GENDER       = #{gender}
+			, PHONE_NUMBER = #{phoneNumber}
+			, ADDRESS      = #{address}
+		WHERE
+			SEQ_NUM = #{seqNum}
+	</update>
+	
+	<delete id="deleteAddress" parameterType="com.barunsw.ojt.vo.AddressBookVo">
+		DELETE FROM TB_ADDRESS
+		WHERE 
+			SEQ_NUM = #{seqNum}
+  	</delete>
+</mapper>
