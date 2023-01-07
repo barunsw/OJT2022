@@ -24,7 +24,7 @@ public class ClientMain {
 
 				AddressBookVo addressVo = new AddressBookVo();
 				// Select
-//				addressBookIf.selectAddressList(addressVo);
+				addressBookIf.selectAddressList(addressVo);
 				
 				// Insert
 //				addressVo.setName("가나다");
@@ -45,8 +45,8 @@ public class ClientMain {
 //				addressBookIf.updateAddress(addressVo);
 				
 				// Delete
-				addressVo.setSeqNum(57);
-				addressBookIf.deleteAddress(addressVo);
+//				addressVo.setSeqNum(57);
+//				addressBookIf.deleteAddress(addressVo);
 				
 				
 			}

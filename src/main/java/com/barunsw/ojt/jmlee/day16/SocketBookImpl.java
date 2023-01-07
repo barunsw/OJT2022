@@ -65,7 +65,7 @@ public class SocketBookImpl implements BookInterface {
 	
 	@Override
 	public List<AddressBookVo> selectAddressList(AddressBookVo addressBookVo) throws Exception {
-			String command = String.format("SELECT\n");
+		String command = String.format("SELECT:SEQNUM=%s\n",addressBookVo.getSeqNum());
 			
 			writer.write(command);
 			writer.flush();
@@ -94,7 +94,7 @@ public class SocketBookImpl implements BookInterface {
 			
 		}
 	
-	@Override
+	/*	@Override
 	public List<AddressBookVo> selectOneAddress(AddressBookVo addressBookVo) throws Exception {
 		String command = String.format("SELECTONE:SEQNUM=%s\n",addressBookVo.getSeqNum());
 		
@@ -125,6 +125,7 @@ public class SocketBookImpl implements BookInterface {
 		return addressList;
 		
 	}
+	*/
 
 	@Override
 	public int insertAddress(AddressBookVo addressBookVo) throws Exception {

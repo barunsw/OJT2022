@@ -16,10 +16,10 @@ public class CalcServer {
 			// RMI registry를 local에 생성
 			Registry registry = LocateRegistry.createRegistry(50000);
 			
-			CalcInterface calc = new CalcImpl();
+			CalcInterface calc = new CalcImpl(); //객체를 생성
 			
 			// RMI registry에 등록
-			registry.rebind("CALC", calc);
+			registry.rebind("CALC", calc); // 서버가 통신할 인터페이스를 스트링으로 지정해줘야함 "CALC"
 		}
 		catch (Exception ex) {
 			LOGGER.error(ex.getMessage(), ex);

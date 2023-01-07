@@ -35,7 +35,7 @@ public class SwingAddressBookImpl implements BookInterface {
 		return addressBooklist;
 	}
 	
-	@Override
+/*	@Override
 	public List<AddressBookVo> selectOneAddress(AddressBookVo addressBookVo) throws Exception {
 
 		List<AddressBookVo> addressBooklist = new ArrayList<>();
@@ -55,7 +55,7 @@ public class SwingAddressBookImpl implements BookInterface {
 		return addressBooklist;
 
 	}
-
+*/
 	public int insertAddress(AddressBookVo addressBookVo) throws Exception {
 
 		try (SqlSession session = sqlSessionFactory.openSession()) {

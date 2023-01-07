@@ -78,12 +78,8 @@ public class ClientSocketHandler extends Thread {
 				CmdType cmd = CmdType.getCmdType(cmdSplit[KEY]); // 명령어
 				switch (cmd) {
 				case SELECT:
-					writer.write(handleSelect()+"\n");
-					writer.flush();
-					break;
-				case SELECTONE:
 					AddressBookVo addressBookVo = parseCmd(cmdSplit[VALUE]); // 데이터 값
-					writer.write(handleOneSelect(addressBookVo)+"\n");
+					writer.write(handleSelect(addressBookVo)+"\n");
 					writer.flush();
 					break;
 				case INSERT:
@@ -108,8 +104,8 @@ public class ClientSocketHandler extends Thread {
 		LOGGER.debug("ClientSocketHandler 종료");
 	}
 
-	private String handleSelect() throws Exception {
-		List<AddressBookVo> addressbookList = addressBookIf.selectAddressList(new AddressBookVo());
+	private String handleSelect(AddressBookVo addressBookVo) throws Exception {
+		List<AddressBookVo> addressbookList = addressBookIf.selectAddressList(addressBookVo);
 		StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append("SELECT");
 		for (AddressBookVo addressBook : addressbookList) {
@@ -121,7 +117,7 @@ public class ClientSocketHandler extends Thread {
 		return stringBuffer.toString();
 	}
 	
-	private String handleOneSelect(AddressBookVo addressBookVo) throws Exception {
+/*	private String handleOneSelect(AddressBookVo addressBookVo) throws Exception {
 		List<AddressBookVo> addressbookList = addressBookIf.selectOneAddress(addressBookVo);
 		StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append("SELECTONE");
@@ -132,7 +128,7 @@ public class ClientSocketHandler extends Thread {
 		}
 		LOGGER.debug(stringBuffer.toString());
 		return stringBuffer.toString();
-	}
+	} */
 	
 	private int handleInsert(AddressBookVo addressBookVo) throws Exception {
 		return addressBookIf.insertAddress(addressBookVo);

@@ -1,4 +1,4 @@
-package com.barunsw.ojt.jmlee.day18;
+package com.barunsw.ojt.jmlee.day19;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -17,10 +17,9 @@ public class ServerMain {
 		try {
 			Registry registry = LocateRegistry.createRegistry(PORT);
 			
-			RMIBookInterface addressBookIf = 
-					new AddressBookImpl();
+			ServerInterface BoardIf = new ServerImpl();
 			
-			registry.rebind("ADDRESSBOOK", addressBookIf); // registry에 rebind
+			registry.rebind("BOARD", BoardIf); // registry에 rebind
 		} 
 		catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);

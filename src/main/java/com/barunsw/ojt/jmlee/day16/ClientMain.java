@@ -16,17 +16,20 @@ public class ClientMain {
 			BookInterface addressBookIf = 
 					new SocketBookImpl("localhost", ServerMain.PORT);
 			
+			AddressBookVo addressbookVo = new AddressBookVo();
 			// SELECT
-//			List<AddressBookVo> addressBookList = addressBookIf.selectAddressList(new AddressBookVo());
+//			List<AddressBookVo> addressBookList = addressBookIf.selectAddressList(addressbookVo);
 //			for (AddressBookVo oneAddressVo : addressBookList) {
 //				LOGGER.debug(oneAddressVo.toString());
-//			}
-			
-			AddressBookVo addressbookVo = new AddressBookVo();
+//			}			
 			
 			//SELECT ONE
-			addressbookVo.setSeqNum(1);
-			addressBookIf.selectOneAddress(addressbookVo);
+			AddressBookVo selectOneAddress = new AddressBookVo();
+			selectOneAddress.setSeqNum(1);
+			List<AddressBookVo> addressBookList2 = addressBookIf.selectAddressList(selectOneAddress);
+			for (AddressBookVo oneAddressVo : addressBookList2) {
+				LOGGER.debug(oneAddressVo.toString());
+			}
 			
 			// SELECT
 //			addressBookIf.selectAddressList(addressbookVo);
