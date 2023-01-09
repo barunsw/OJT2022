@@ -151,8 +151,8 @@ public class ChatPanel extends JPanel implements EventListener {
          else {
             initRmi();            
          }
-         
-      } catch (Exception ex) {
+      } 
+      catch (Exception ex) {
          LOGGER.debug(ex.getMessage(), ex);
       }
    }
@@ -165,7 +165,8 @@ public class ChatPanel extends JPanel implements EventListener {
       
       try {
          serverIf.deregister(user);
-      } catch (Exception ex) {
+      } 
+      catch (Exception ex) {
          LOGGER.debug(ex.getMessage(), ex);
       }
    }
@@ -184,7 +185,8 @@ public class ChatPanel extends JPanel implements EventListener {
       String message = String.format("%s : %s", simpleDateFormat.format(new Date()), jTextField_Input.getText());
       try {
          serverIf.send(user, message);
-      } catch (Exception ex) {
+      } 
+      catch (Exception ex) {
          LOGGER.debug(ex.getMessage(), ex);
       }
       
