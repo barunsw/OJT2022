@@ -1,4 +1,4 @@
-package com.barunsw.ojt.jmlee.day20;
+package com.barunsw.ojt.jmlee.day21;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -9,10 +9,8 @@ import javax.swing.UIManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 public class ClientMain {
-	
-	private static final Logger LOGGER = LogManager.getLogger(ClientMain.class);
+private static final Logger LOGGER = LogManager.getLogger(ClientMain.class);
 	
 	public static EventQueueWorker eventQueueWorker = new EventQueueWorker();
 	
@@ -27,9 +25,9 @@ public class ClientMain {
 				LOGGER.error(ex.getMessage() + ex);
 			}
 						
-			ChatFrame frame = new ChatFrame();
+			ClientFrame frame = new ClientFrame();
 			
-			frame.setSize(new Dimension(ChatFrame.WIDTH, ChatFrame.HEIGHT));
+			frame.setSize(new Dimension(ClientFrame.WIDTH, ClientFrame.HEIGHT));
 
 			// frame이 가운데 표시되게		
 			Dimension scrDim = Toolkit.getDefaultToolkit().getScreenSize();

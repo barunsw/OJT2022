@@ -1,4 +1,4 @@
-package com.barunsw.ojt.jmlee.day19;
+package com.barunsw.ojt.jmlee.day21;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -9,15 +9,15 @@ import javax.swing.JOptionPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class TestFrame extends JFrame {
-	private static final Logger LOGGER = LogManager.getLogger(TestFrame.class);
+public class ClientFrame extends JFrame {
+	private static final Logger LOGGER = LogManager.getLogger(ClientFrame.class);
 	
 	public static final int WIDTH 	= 870;
 	public static final int HEIGHT 	= 635;
 	
-	private TestPanel testPanel = new TestPanel();
+	private ClientPanel testPanel = new ClientPanel();
 	
-	public TestFrame() {
+	public ClientFrame() {
 		try {
 			initComponent();
 		}
@@ -41,7 +41,7 @@ public class TestFrame extends JFrame {
 	void windowClosing(WindowEvent e) {
 		LOGGER.debug("windowClosing");
 		
-		int result = JOptionPane.showConfirmDialog(TestFrame.this, 
+		int result = JOptionPane.showConfirmDialog(ClientFrame.this, 
 				"정말로 종료하시겠습니까?", "종료", JOptionPane.OK_CANCEL_OPTION);
 		if (result == JOptionPane.OK_OPTION) {
 			System.exit(0);
@@ -50,9 +50,9 @@ public class TestFrame extends JFrame {
 }
 
 class TestFrame_this_WindowAdapter extends WindowAdapter {
-	private TestFrame adaptee;
+	private ClientFrame adaptee;
 	
-	public TestFrame_this_WindowAdapter(TestFrame adaptee) {
+	public TestFrame_this_WindowAdapter(ClientFrame adaptee) {
 		this.adaptee = adaptee;
 	}
 	

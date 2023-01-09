@@ -1,4 +1,4 @@
-package com.barunsw.ojt.jmlee.day20;
+package com.barunsw.ojt.jmlee.day21;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -19,13 +19,15 @@ public abstract class QueueWorker<T> extends Thread {
     
     public abstract void processObject(T t);
 
-    public void push(T t) {
-    	LOGGER.debug("=====Queue Worker PUSH=====", t);
-		messageRepository.add(t);	// 입력된 메세지 리스트에 추가
-		synchronized (waitObject) {
-			waitObject.notify();  	// 기다리던 객체를 꺠운다
+	public void push(T t) {
+		LOGGER.debug("=====Queue Worker PUSH=====", t);
+		messageRepository.add(t); 				// 입력된 메세지 리스트에 추가
+		if (messageRepository.size() == 100) {	// 100 개까지 입력받고
+			synchronized (waitObject) {
+				waitObject.notify(); 			// 기다리던 객체를 꺠운다
+			}
 		}
-    }
+	}
 
     public void run() {
         T t = null;
@@ -34,7 +36,13 @@ public abstract class QueueWorker<T> extends Thread {
         while ( runFlag ) {
             synchronized ( waitObject ) {
                 if ( messageRepository.size() > 0 ) {	// 입력된 메세지가 하나 이상이면 지워준다
-                    t = messageRepository.remove(0);
+                    try {
+						Thread.sleep(300);				// 1초에 하나씩 큐를 가져옴
+					} catch (Exception e) {
+                		LOGGER.error(e.getMessage(), e);
+					}
+                    LOGGER.debug(String.format("버퍼 사이즈 %s", getBufferSize()));
+                	t = messageRepository.remove(0);	// 먼저 들어온 순서대로 삭제
                 }
                 else {									// 메세지가 없으면
                     t = null;

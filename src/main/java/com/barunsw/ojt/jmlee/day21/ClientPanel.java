@@ -1,4 +1,4 @@
-package com.barunsw.ojt.jmlee.day19;
+package com.barunsw.ojt.jmlee.day21;
 
 import java.awt.Graphics;
 import java.rmi.Remote;
@@ -16,8 +16,8 @@ import com.barunsw.ojt.constants.BoardType;
 import com.barunsw.ojt.constants.Severity;
 import com.barunsw.ojt.vo.BoardVo;
 
-public class TestPanel extends JPanel {
-	private static final Logger LOGGER = LogManager.getLogger(TestPanel.class);
+public class ClientPanel extends JPanel implements EventListener {
+	private static final Logger LOGGER = LogManager.getLogger(ClientPanel.class);
 	
 	public static final int WIDTH 	= 854;
 	public static final int HEIGHT	= 604;
@@ -30,8 +30,9 @@ public class TestPanel extends JPanel {
 	
 	List<BoardVo> boardList;
 	
-	public TestPanel() {
+	public ClientPanel() {
 		try {
+			initEvent();
 			initComponent();
 			initData();
 		}
@@ -40,13 +41,8 @@ public class TestPanel extends JPanel {
 		}
 	}
 
-	void initRepaint(BoardVo boardVo) {
-		for (BoardVo board : boardList) {
-			if (board.getBoardId() == boardVo.getBoardId()) {
-				board.setSeverity(boardVo.getSeverity());
-			}
-		}
-		repaint();
+	private void initEvent() {
+		ClientMain.eventQueueWorker.addEventListener(this);
 	}
 
 	private void initComponent() throws Exception {
@@ -54,18 +50,18 @@ public class TestPanel extends JPanel {
 	}
 	
 	private List<BoardVo> getBoardData() {
-		try {
+		try {			
 			ClientInterface client = new ClientImpl(this);
 			Registry registry = LocateRegistry.getRegistry(ServerMain.PORT);
 
-			Remote remote = registry.lookup("BOARD");
-			ServerInterface boardIf = null;
+			Remote remote = registry.lookup(ServerMain.BIND_NAME);
+			ServerInterface serverIf = null;
 			if (remote instanceof ServerInterface) {
-				boardIf = (ServerInterface) remote;
+				serverIf = (ServerInterface) remote;
 				
-				boardList = boardIf.selectBoardList(new BoardVo());
+				boardList = serverIf.selectBoardList(new BoardVo());
 			}
-			boardIf.register(client);
+			serverIf.register(client);
 			
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
@@ -78,7 +74,7 @@ public class TestPanel extends JPanel {
 		// 연동에 의해 board 정보 조회
 		boardList = getBoardData();  
 		
-		LOGGER.debug("boardList:" + boardList);
+		LOGGER.debug(String.format("boardList : %s\n", boardList));
 		
 		for (BoardVo oneBoardVo : boardList) {
 			int boardId = oneBoardVo.getBoardId();
@@ -122,28 +118,23 @@ public class TestPanel extends JPanel {
 	}
 	
 	@Override
-	protected void paintComponent(Graphics g) {
-		LOGGER.debug("paintComponent");
-/*		
-		g.setColor(Color.white);
-		g.fillRect(0, 0, this.getWidth(), this.getHeight());
-		
-		g.setColor(Color.black);
-		g.drawOval(100, 100, 300, 200);
-		
-		// 문자열을 가운데 쓴다.
-		g.setColor(Color.red);
-		g.setFont(new Font("Tahoma", Font.BOLD, 20));
-		
-		int stringWidth = g.getFontMetrics().stringWidth(greetings);
-		int stringHeight = g.getFontMetrics().getHeight();
-		
-		int strX = (this.getWidth() - stringWidth) / 2; 
-		int strY = (this.getHeight() - stringHeight) / 2; 
-		
-		g.drawString(greetings, strX, strY);
-*/
+	protected void paintComponent(Graphics g) {					//  내부적으로 JCompnent 클래스를 상속받아 
+		LOGGER.debug("paintComponent");							//	스스로 백그라운드 이미지 생성
 		g.drawImage(ImageFactory.backgroundImageIcon.getImage(),
 				0, 0, this);
+	}
+
+	@Override
+	public void push(Object o) {
+		LOGGER.debug("push : " + o);
+		if (o instanceof BoardVo) {
+			BoardVo boardVo = (BoardVo) o;
+			for (BoardVo board : boardList) {
+				if (board.getBoardId() == boardVo.getBoardId()) {
+					board.setSeverity(boardVo.getSeverity());
+					repaint();
+				}
+			}
+		}
 	}
 }

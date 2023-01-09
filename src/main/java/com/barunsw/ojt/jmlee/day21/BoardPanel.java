@@ -1,4 +1,4 @@
-package com.barunsw.ojt.jmlee.day19;
+package com.barunsw.ojt.jmlee.day21;
 
 import java.awt.Graphics;
 
@@ -42,7 +42,7 @@ public class BoardPanel extends JPanel {
 	
 	@Override
 	public void paintComponent(Graphics g) {
-		LOGGER.debug("paintComponent boardName:" + boardVo.getBoardName());
+//		LOGGER.debug("paintComponent boardName:" + boardVo.getBoardName());
 		
 		int severity = boardVo.getSeverity();
 		//Graphics2D g2d = (Graphics2D)g;

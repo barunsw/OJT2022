@@ -16,9 +16,7 @@ public class ClientImpl extends UnicastRemoteObject
 	
 	@Override
 	public void push(String msg) throws RemoteException {
-		// TODO Auto-generated method stub
-		LOGGER.debug("msg:" + msg);
-		
+		LOGGER.debug(String.format("msg: %s" ,msg));
 		ClientMain.eventQueueWorker.push(msg);
 	}
 }

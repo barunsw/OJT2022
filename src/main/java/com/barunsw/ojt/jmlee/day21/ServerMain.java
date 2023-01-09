@@ -1,4 +1,4 @@
-package com.barunsw.ojt.jmlee.day20;
+package com.barunsw.ojt.jmlee.day21;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -9,8 +9,8 @@ import org.apache.logging.log4j.Logger;
 public class ServerMain {
 	private static final Logger LOGGER = LogManager.getLogger(ServerMain.class);
 	
-	public static final String BIND_NAME = "CHAT";
-	public static final int PORT = 50002;
+	public static final String BIND_NAME = "RACK";
+	public static final int PORT = 50000;
 	
 	public void start() {
 		LOGGER.debug(String.format("+++ ServerMain started."));
@@ -18,9 +18,9 @@ public class ServerMain {
 		try {
 			Registry registry = LocateRegistry.createRegistry(PORT);
 			
-			ServerInterface serverIf = new ServerImpl();
+			ServerInterface ServerIf = new ServerImpl();
 			
-			registry.bind(BIND_NAME, serverIf);
+			registry.rebind(BIND_NAME, ServerIf); // registry에 rebind
 		} 
 		catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);

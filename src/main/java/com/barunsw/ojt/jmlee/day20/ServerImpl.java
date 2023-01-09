@@ -12,8 +12,7 @@ public class ServerImpl extends UnicastRemoteObject
 	implements ServerInterface {
 	private static final Logger LOGGER = LogManager.getLogger(ServerImpl.class);
 	
-	private Map<String, ClientInterface> clientRepo = 
-			new ConcurrentHashMap<>();
+	private Map<String, ClientInterface> clientRepo = new ConcurrentHashMap<>();
 	
 	public ServerImpl() throws RemoteException {
 		super();
@@ -21,9 +20,7 @@ public class ServerImpl extends UnicastRemoteObject
 	
 	@Override
 	public void register(String name, ClientInterface clientInterface) throws RemoteException {
-		// TODO Auto-generated method stub
-		LOGGER.debug("register");
-		
+		LOGGER.debug(String.format("%s 님 로그인", name));
 		synchronized (clientRepo) {
 			clientRepo.put(name, clientInterface);
 		}
@@ -31,7 +28,10 @@ public class ServerImpl extends UnicastRemoteObject
 	
 	@Override
 	public void deregister(String name) throws RemoteException {
-		LOGGER.debug("deregister");
+		LOGGER.debug(String.format("%s 님 로그아웃", name));
+		synchronized (clientRepo) {
+			clientRepo.remove(name);
+		}
 		// 지워준다.
 	}
 

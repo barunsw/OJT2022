@@ -1,4 +1,4 @@
-package com.barunsw.ojt.jmlee.day19;
+package com.barunsw.ojt.jmlee.day21;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -15,7 +15,7 @@ public class ClientImpl extends UnicastRemoteObject implements ClientInterface {
 	
 	@Override
 	public void pushAlarm(BoardVo boardVo) throws RemoteException {
-		panel.initRepaint(boardVo);
+		ClientMain.eventQueueWorker.push(boardVo);
 	}
 
 }

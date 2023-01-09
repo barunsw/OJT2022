@@ -12,11 +12,10 @@ public class ClientTestPanel implements EventListener {
 
 	@Override
 	public void push(Object o) {
-		// TODO Auto-generated method stub
 		if (o instanceof String) {
 			String str = (String)o;
 			
-			LOGGER.debug("push:" + str);
+			LOGGER.debug(String.format("push: %s" , str));
 		}
 	}
 }
