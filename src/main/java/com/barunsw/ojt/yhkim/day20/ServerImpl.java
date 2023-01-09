@@ -8,12 +8,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ServerImpl extends UnicastRemoteObject 
-   implements ServerInterface {
+public class ServerImpl extends UnicastRemoteObject implements ServerInterface {
    private static final Logger LOGGER = LogManager.getLogger(ServerImpl.class);
    
-   private Map<User, ClientInterface> clientRepo = 
-         new ConcurrentHashMap<>();
+   private Map<User, ClientInterface> clientRepo = new ConcurrentHashMap<>();
    
    private int seqNum = 1;
    
@@ -37,12 +35,11 @@ public class ServerImpl extends UnicastRemoteObject
       synchronized (clientRepo) {
          clientRepo.remove(user);
       }
-      LOGGER.debug("{}", clientRepo);
    }
 
    @Override
    public void send(User user, String msg) throws RemoteException {
-      LOGGER.debug(String.format("Server send name : [%s] / id : [%d]",user.getName(), user.getSeqNum()));
+      LOGGER.debug(String.format("Server send  id : [%d] / name : [%s]", user.getSeqNum(), user.getName()));
       
       synchronized (clientRepo) {
          for (ClientInterface oneClient : clientRepo.values()) {
