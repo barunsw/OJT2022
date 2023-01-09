@@ -17,7 +17,7 @@ public class ServerImpl extends UnicastRemoteObject implements ServerInterface {
 	private static Logger LOGGER = LoggerFactory.getLogger(ServerImpl.class);
 	private static SqlSessionFactory sqlSessionFactory = SqlSessionFactoryManager.getSqlSessionFactory();
 	
-	private List<BoardVo> boardList = new ArrayList<>();
+	private List<BoardVo> boardList;
 	private List<ClientInterface> clientList = new ArrayList<>();
 
 	public ServerImpl() throws RemoteException {
@@ -75,7 +75,6 @@ public class ServerImpl extends UnicastRemoteObject implements ServerInterface {
 
 	@Override
 	public List<BoardVo> selectBoardList() throws RemoteException {
-		LOGGER.debug(String.format("List<BoardVo> selectBoardList()"));
 		List<BoardVo> boardList = new ArrayList<>();
 		
 		try (SqlSession session = sqlSessionFactory.openSession()) {
