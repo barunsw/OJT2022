@@ -254,6 +254,7 @@ public class TestPanel extends JPanel {
 	}
 
 	public void jButton_Save_actionPerformed(ActionEvent e) {
+<<<<<<< HEAD
 		String group = jTextField_group_name.getText();
 		String parentGroup = jTextField_parent_group_id.getText();
 		
@@ -272,22 +273,47 @@ public class TestPanel extends JPanel {
 		oneGroup.setGroup_name(group);
 		oneGroup.setParent_group_id(num);
 		
+=======
+		// 입력값 호출
+		String groupId = jTextField_group_id.getText();
+		String groupName = jTextField_group_name.getText();
+		String parentGroup = jTextField_parent_group_id.getText();
+
+		groupVo.setGroup_name(parentGroup);
+		
+		// 부모정보 입력을 위한 기존정보 호출
+		GroupVo g = addressBookIf.selectOneGroup(groupVo);
+		int num = g.getGroup_id();
+		
+		// 추가될 객체 생성
+		GroupVo oneGroup = new GroupVo();
+		oneGroup.setGroup_id(Integer.parseInt(groupId));
+		oneGroup.setGroup_name(groupName);
+		oneGroup.setParent_group_id(num); // 노드 : 부모번호 == 자식번호
+	
+>>>>>>> 3d663cf ([이재민] JTree 일부내용 수정)
 		try {
 			addressBookIf.insertGroup(oneGroup);
 			resetTree();
 			textFieldReset();
 		} catch (Exception ex) {
 			LOGGER.error(ex.getMessage(), ex);
-		}
+		} 
 		
 	}
 
 	public void jButton_Delete_actionPerformed(ActionEvent e) {
 
+<<<<<<< HEAD
 		String groupId = jTextField_group_id.getText();
 		
 		GroupVo g = new GroupVo();
 		g.setGroup_id(Integer.parseInt(groupId));
+=======
+		String groupId = jTextField_group_id.getText(); // 텍스트 필드의 그룹ID 호출
+
+		groupVo.setGroup_id(Integer.parseInt(groupId));
+>>>>>>> 3d663cf ([이재민] JTree 일부내용 수정)
 		
 		try {
 			addressBookIf.deleteGroup(g);
