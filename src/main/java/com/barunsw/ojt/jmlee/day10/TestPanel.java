@@ -1,5 +1,6 @@
 package com.barunsw.ojt.jmlee.day10;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -8,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -24,48 +26,47 @@ import javax.swing.tree.TreePath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
+import com.barunsw.ojt.constants.Gender;
+import com.barunsw.ojt.vo.AddressBookVo;
 
 public class TestPanel extends JPanel {
 	private static final Logger LOGGER = LogManager.getLogger(TestPanel.class);
-
+	
 	private GridBagLayout gridBagLayout = new GridBagLayout();
-
 	
-	// 프레임 설정
-	private JPanel jPanel_Main = new JPanel();
-	private JPanel jPanel_Top = new JPanel();
-	private JPanel jPanel_Bottom = new JPanel();
-	private JTree jTree_Result = new JTree();
+	private JPanel jPanel_Right = new JPanel();
+	private JPanel jPanel_Search = new JPanel();
+	private JPanel jPanel_Button = new JPanel();
 	
-	// 라벨설정
-	private JLabel jLabel_group_id = new JLabel("그룹 ID");
-	private JLabel jLabel_group_name = new JLabel("그룹명");
-	private JLabel jLabel_parent_group_id = new JLabel("상위 그룹명");
-	// 텍스트 박스 설정
-	private JTextField jTextField_group_id = new JTextField();
-	private JTextField jTextField_group_name = new JTextField();
-	private JTextField jTextField_parent_group_id = new JTextField();
-	// 버튼 설정
-	private JButton jButton_Save = new JButton("저장");
+	private JLabel jLabel_GroupId = new JLabel("그룹아이디");
+	private JLabel jLabel_Group = new JLabel("그룹명");
+	private JLabel jLabel_ParentGroup = new JLabel("상위그룹명");
+	
+	private JTextField jTextField_GroupId = new JTextField();
+	private JTextField jTextField_Group = new JTextField();
+	private JTextField jTextField_ParentGroup = new JTextField();
+	
+	private JButton jButton_Save = new JButton("등록");
 	private JButton jButton_Update = new JButton("수정");
 	private JButton jButton_Delete = new JButton("삭제");
-	
+	private JButton jButton_Reset = new JButton("비우기");
+
 	private JScrollPane jScrollPane_Tree = new JScrollPane();
 	
-	private DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("root");
+	private JTree jTree_Result = new JTree();
+	
+	private DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("그룹");
 	private DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
 	
-	private GroupInterface addressBookIf;
-	
+	private GroupInterface groupBookIf;
 	
 	public TestPanel() {
 		try {
 			initAddressBookIf();
 			initComponent();
+			initEvent();
 			initTree();
 			initData();
-			initEvent();
 		}
 		catch (Exception ex) {
 			LOGGER.error(ex.getMessage(), ex);
@@ -73,284 +74,269 @@ public class TestPanel extends JPanel {
 	}
 	
 	private void initAddressBookIf() throws Exception {
-		String className = SwingTest.properties.getProperty("address_if_class");
+		String className = SwingTest.properties.getProperty("group_if_class");
 		
 		LOGGER.debug("className:" + className);
 				
 		Object o = Class.forName(className).newInstance();
 		if (o instanceof GroupInterface) {
-			addressBookIf = (GroupInterface)o; 
+			groupBookIf = (GroupInterface)o; 
 		}
 	}
 	
-	private void initComponent() {
-		this.setLayout(gridBagLayout);
+	private void initComponent() throws Exception {
+		this.setLayout(gridBagLayout);		
 		
-		jLabel_group_id.setPreferredSize(new Dimension(100, 30));
-		jLabel_group_id.setHorizontalAlignment(JLabel.CENTER);
-		jTextField_group_id.setPreferredSize(new Dimension(400, 30));
+		jPanel_Right.setLayout(gridBagLayout);
+		jPanel_Search.setLayout(gridBagLayout);
+		jPanel_Button.setLayout(gridBagLayout);
+	
+		jPanel_Search.setBackground(Color.cyan);
+		jPanel_Button.setBackground(Color.red);
 		
+		jLabel_GroupId.setPreferredSize(new Dimension(100, 30));
+		jLabel_GroupId.setHorizontalAlignment(JLabel.CENTER);
+		jTextField_GroupId.setPreferredSize(new Dimension(400, 30));
+		jTextField_GroupId.setEditable(false);
+
+		jLabel_Group.setPreferredSize(new Dimension(100, 30));
+		jLabel_Group.setHorizontalAlignment(JLabel.CENTER);
+		jTextField_Group.setPreferredSize(new Dimension(400, 30));
+
+		jLabel_ParentGroup.setPreferredSize(new Dimension(100, 30));
+		jLabel_ParentGroup.setHorizontalAlignment(JLabel.CENTER);
+		jTextField_ParentGroup.setPreferredSize(new Dimension(400, 30));
+
 		
-		jLabel_group_name.setPreferredSize(new Dimension(100, 30));
-		jLabel_group_name.setHorizontalAlignment(JLabel.CENTER);
-		jTextField_group_name.setPreferredSize(new Dimension(400, 30));
-		
-		jLabel_parent_group_id.setPreferredSize(new Dimension(100, 30));
-		jLabel_parent_group_id.setHorizontalAlignment(JLabel.CENTER);
-		jTextField_parent_group_id.setPreferredSize(new Dimension(400, 30));
-		
-		jPanel_Main.setLayout(gridBagLayout);
-		jPanel_Top.setLayout(gridBagLayout);
-		jPanel_Bottom.setLayout(gridBagLayout);
-		
-		jPanel_Top.add(jLabel_group_name, new GridBagConstraints(0, 0, 1, 1,
-				0.2, 0.0,
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH, 
-				new Insets(5, 5, 5, 5),
-				0, 0));
-		jPanel_Top.add(jTextField_group_name, new GridBagConstraints(1, 0, 1, 1,
+		jPanel_Search.add(jLabel_Group, new GridBagConstraints(0, 0, 1, 1,
 				1.0, 0.0,
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH, 
-				new Insets(5, 5, 5, 5),
+				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+				new Insets(5,5,5,5),
 				0, 0));
-		jPanel_Top.add(jLabel_parent_group_id, new GridBagConstraints(0, 1, 1, 1,
-				0.2, 0.0,
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH, 
-				new Insets(5, 5, 5, 5),
-				0, 0));
-		jPanel_Top.add(jTextField_parent_group_id, new GridBagConstraints(1, 1, 1, 1,
+		jPanel_Search.add(jTextField_Group, new GridBagConstraints(1, 0, 1, 1,
 				1.0, 0.0,
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH, 
-				new Insets(5, 5, 5, 5),
+				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+				new Insets(5,5,5,5),
 				0, 0));
-		jPanel_Top.add(jLabel_group_id, new GridBagConstraints(0, 2, 1, 1,
-				0.2, 0.0,
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH, 
-				new Insets(5, 5, 5, 5),
-				0, 0));
-		jPanel_Top.add(jTextField_group_id, new GridBagConstraints(1, 2, 1, 1,
+		jPanel_Search.add(jLabel_ParentGroup, new GridBagConstraints(0, 1, 1, 1,
 				1.0, 0.0,
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH, 
-				new Insets(5, 5, 5, 5),
+				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+				new Insets(5,5,5,5),
 				0, 0));
-		
-		//버튼
-		jPanel_Bottom.add(jButton_Save, new GridBagConstraints(0, 0, 1, 1,
+		jPanel_Search.add(jTextField_ParentGroup, new GridBagConstraints(1, 1, 1, 1,
 				1.0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+				new Insets(5,5,5,5),
+				0, 0));
+		jPanel_Search.add(jLabel_GroupId, new GridBagConstraints(0, 2, 1, 1,
+				1.0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+				new Insets(5,5,5,5),
+				0, 0));
+		jPanel_Search.add(jTextField_GroupId, new GridBagConstraints(1, 2, 1, 1,
+				1.0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+				new Insets(5,5,5,5),
+				0, 0));
+		jPanel_Button.add(jButton_Save,  new GridBagConstraints(0, 0, 1, 1,
+				1.0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+				new Insets(5,5,5,5),
+				0, 0));
+		jPanel_Button.add(jButton_Update,  new GridBagConstraints(1, 0, 1, 1,
+				1.0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+				new Insets(5,5,5,5),
+				0, 0));
+		jPanel_Button.add(jButton_Delete,  new GridBagConstraints(0, 1, 1, 1,
+				1.0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+				new Insets(5,5,5,5),
+				0, 0));
+		jPanel_Button.add(jButton_Reset,  new GridBagConstraints(1, 1, 1, 1,
+				1.0, 0.0,
+				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+				new Insets(5,5,5,5),
+				0, 0));
+		jPanel_Right.add(jPanel_Search, new GridBagConstraints(0, 0, 1, 1,
+				1.0, 0.5,
 				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 				new Insets(5, 5, 5, 5),
 				0, 0));
-		jPanel_Bottom.add(jButton_Update, new GridBagConstraints(1, 0, 1, 1,
-				1.0, 0.0,
+		jPanel_Right.add(jPanel_Button, new GridBagConstraints(0, 1, 1, 1,
+				1.0, 0.5,
 				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
 				new Insets(5, 5, 5, 5),
 				0, 0));
-		jPanel_Bottom.add(jButton_Delete, new GridBagConstraints(2, 0, 1, 1,
-				1.0, 0.0,
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-				new Insets(5, 5, 5, 5),
-				0, 0));
-		
-		jPanel_Main.add(jPanel_Top, new GridBagConstraints(0, 0, 1, 1,
-				1.0, 0.0,
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-				new Insets(5, 5, 5, 5),
-				0, 0));
-		jPanel_Main.add(jPanel_Bottom, new GridBagConstraints(0, 1, 1, 1,
-				1.0, 0.0,
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-				new Insets(5, 5, 5, 5),
-				0, 0));
-		
-		this.add(jScrollPane_Tree, new GridBagConstraints(0, 0, 1, 1,
-				1.0, 1.0,
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-				new Insets(5, 5, 5, 5),
-				0, 0));
-		this.add(jPanel_Main, new GridBagConstraints(1, 0, 1, 1,
-				0.6, 0.0,
-				GridBagConstraints.CENTER, GridBagConstraints.BOTH, 
-				new Insets(5, 5, 5, 5),
-				0, 0));
+		this.add(jPanel_Right, 
+				new GridBagConstraints(1, 0, 1, 1,
+						0.5, 1.0,
+						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+						new Insets(5, 5, 5, 5),
+						0, 0));
+		this.add(jScrollPane_Tree, 
+				new GridBagConstraints(0, 0, 1, 1,
+						0.5, 1.0,
+						GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+						new Insets(5, 5, 5, 5),
+						0, 0));
 		
 		jScrollPane_Tree.getViewport().add(jTree_Result);
-	}
-	
-	private void initTree() {
-		jTree_Result.setModel(treeModel);
-		treeModel.setRoot(rootNode);
-		// root노드 숨김
-		//jTree_Result.setRootVisible(true);
-	}
-	
-	public void resetTree() {
-		rootNode.removeAllChildren();
-		initData();
-	}
-	
-	public void textFieldReset() {
-		jTextField_group_id.setText(null);
-		jTextField_group_name.setText(null);
-		jTextField_parent_group_id.setText(null);
-	}
-	
-	private void initData() {
-		
-		List<GroupVo> groupList = addressBookIf.selectGroup(null);
-		Vector<DefaultMutableTreeNode> parent = new Vector<>();
-		
-		for (int i = 0; i < groupList.size(); i++) {
-			GroupVo oneGroup = groupList.get(i);
-			
-			DefaultMutableTreeNode oneNode = new DefaultMutableTreeNode();
-			oneNode.setUserObject(oneGroup);
-		
-			if (oneGroup.getParent_group_id() == 0) { // Parent_group_id가 0을 부모노드로 설정
-				parent.add(oneNode);
-			}
-			else {
-				for (int son = 0; son < parent.size(); son++) {
-					if (((GroupVo) parent.get(son).getUserObject()).getGroup_id() == oneGroup.getParent_group_id()) {
-						parent.get(son).add(oneNode);
-						break;
-					}
-				}
-			}
-		}
-		for (DefaultMutableTreeNode par : parent) {
-			rootNode.add(par);
-		}
-		treeModel.reload();
-		
 	}
 	
 	private void initEvent() {
 		jButton_Save.addActionListener(new TestPanel_jButton_Save_ActionListener(this));
 		jButton_Delete.addActionListener(new TestPanel_jButton_Delete_ActionListener(this));
 		jButton_Update.addActionListener(new TestPanel_jButton_Update_ActionListener(this));
+		jButton_Reset.addActionListener(new TestPanel_jButton_Reset_ActionListener(this));
 		jTree_Result.addMouseListener(new TestPanel_jTree_Result_MouseAdapter(this));
 	}
 	
-	void jTree_Result_mouseReleased(MouseEvent e) {
-		//사용자가 tree를 클릭한 경로를 가져온다. 없을시 null
-		TreePath tp = jTree_Result.getPathForLocation(e.getX(), e.getY());
-
-		GroupVo msR = new GroupVo();
+	private void initTree() {
+		treeModel.setRoot(rootNode);
+		jTree_Result.setModel(treeModel);
+		// root노드 숨김
+		// jTree_Result.setRootVisible(false);
+	}
+	
+	public void treeReset() {
+		rootNode.removeAllChildren();
+		initData();
+	}
+	
+	private void initData() {
+	
+		List<GroupVo> groupBookList = groupBookIf.selectGroup(null);
+		Vector<DefaultMutableTreeNode> parents = new Vector<>();
 		
-		if (tp != null) {
-			jTextField_parent_group_id.setText((tp.getPath()[1].toString()));
-			if (tp.getPath().length > 2) {
-				msR.setGroup_name((tp.getPath()[2]).toString());
-				msR = addressBookIf.selectOneGroup(msR);
-				jTextField_group_id.setText(msR.getGroup_id()+"");
-				jTextField_group_name.setText((tp.getPath()[2].toString()));
+		for (int i = 0; i < groupBookList.size(); i++) {
+
+			GroupVo oneGroup = groupBookList.get(i);
+		        
+			DefaultMutableTreeNode oneNode = new DefaultMutableTreeNode();
+			oneNode.setUserObject(oneGroup);
+			
+			if(oneGroup.getParent_group_id() == 0) {				
+				parents.add(oneNode);
 			}
 			else {
-				jTextField_group_id.setText(null);
-				jTextField_group_name.setText("상위 그룹입니다.");
+				for (int j = 0; j < parents.size(); j++) {
+					if (((GroupVo) parents.get(j).getUserObject()).getGroup_id() == oneGroup.getParent_group_id()) {
+						parents.get(j).add(oneNode);
+						break;
+					}
+				}
 			}
 		}
-	
-	}
 
+		for(DefaultMutableTreeNode par : parents) {
+			rootNode.add(par);
+		}
+		
+		treeModel.reload();
+	}
+	
+	void jTree_Result_mouseReleased(MouseEvent e) {
+		 TreePath tp = jTree_Result.getPathForLocation(e.getX(), e.getY());
+		 
+		GroupVo g = new GroupVo();
+		 
+		 if(tp!=null) {
+			jTextField_ParentGroup.setText((tp.getPath()[1]).toString());
+			if(tp.getPath().length > 2) {
+				g.setGroup_name((tp.getPath()[2]).toString());
+				g = groupBookIf.selectOneGroup(g);
+				jTextField_GroupId.setText(g.getGroup_id()+"");
+				jTextField_Group.setText((tp.getPath()[2]).toString());				 
+			} 
+			else { 
+				jTextField_GroupId.setText(null);
+				jTextField_Group.setText("상위 그룹입니다");
+			}
+		 }
+	}
+	
+	public void textFieldReset() {
+		jTextField_GroupId.setText(null);
+		jTextField_Group.setText(null);
+		jTextField_ParentGroup.setText(null);
+	}
+	
 	public void jButton_Save_actionPerformed(ActionEvent e) {
-<<<<<<< HEAD
-		String group = jTextField_group_name.getText();
-		String parentGroup = jTextField_parent_group_id.getText();
+		String group = jTextField_Group.getText();
+		String parentGroup = jTextField_ParentGroup.getText();	
 		
 		int num = 0;
 		if (!group.equals("")) {
 			GroupVo g = new GroupVo();
 			g.setGroup_name(parentGroup);
-			GroupVo g2 = new GroupVo();
+			GroupVo g2 = groupBookIf.selectOneGroup(g);
 			num = g2.getGroup_id();
 		}
 		else {
 			group = parentGroup;
 			num = 0;
 		}
+
 		GroupVo oneGroup = new GroupVo();
 		oneGroup.setGroup_name(group);
 		oneGroup.setParent_group_id(num);
 		
-=======
-		// 입력값 호출
-		String groupId = jTextField_group_id.getText();
-		String groupName = jTextField_group_name.getText();
-		String parentGroup = jTextField_parent_group_id.getText();
-
-		groupVo.setGroup_name(parentGroup);
-		
-		// 부모정보 입력을 위한 기존정보 호출
-		GroupVo g = addressBookIf.selectOneGroup(groupVo);
-		int num = g.getGroup_id();
-		
-		// 추가될 객체 생성
-		GroupVo oneGroup = new GroupVo();
-		oneGroup.setGroup_id(Integer.parseInt(groupId));
-		oneGroup.setGroup_name(groupName);
-		oneGroup.setParent_group_id(num); // 노드 : 부모번호 == 자식번호
-	
->>>>>>> 3d663cf ([이재민] JTree 일부내용 수정)
-		try {
-			addressBookIf.insertGroup(oneGroup);
-			resetTree();
+		try {			
+			groupBookIf.insertGroup(oneGroup);
+			treeReset();
 			textFieldReset();
-		} catch (Exception ex) {
-			LOGGER.error(ex.getMessage(), ex);
-		} 
-		
+		}
+		catch (Exception ex) {
+			LOGGER.debug(ex.toString());
+		}
 	}
-
+	
 	public void jButton_Delete_actionPerformed(ActionEvent e) {
-
-<<<<<<< HEAD
-		String groupId = jTextField_group_id.getText();
 		
-		GroupVo g = new GroupVo();
-		g.setGroup_id(Integer.parseInt(groupId));
-=======
-		String groupId = jTextField_group_id.getText(); // 텍스트 필드의 그룹ID 호출
+		String groupId = jTextField_GroupId.getText();
 
-		groupVo.setGroup_id(Integer.parseInt(groupId));
->>>>>>> 3d663cf ([이재민] JTree 일부내용 수정)
-		
+		GroupVo p = new GroupVo();
+		p.setGroup_id(Integer.parseInt(groupId));
+
 		try {
-			addressBookIf.deleteGroup(g);
-			resetTree();
+			groupBookIf.deleteGroup(p);	
+			treeReset();
 			textFieldReset();
 		}
 		catch (Exception ex) {
 			LOGGER.error(ex.getMessage(), ex);
 		}
-		
 	}
-
-	public void jButton_Update_Performed(ActionEvent e) {
-
-		String groupId = jTextField_group_id.getText();
-		String groupName = jTextField_group_name.getText();
-		String parentGroup = jTextField_parent_group_id.getText();
+	
+	public void jButton_Update_actionPerformed(ActionEvent e) {
+		String groupId = jTextField_GroupId.getText();
+		String group = jTextField_Group.getText();
+		String parentGroup = jTextField_ParentGroup.getText();
 		
 		GroupVo g = new GroupVo();
 		g.setGroup_name(parentGroup);
-		
-		GroupVo g2 = addressBookIf.selectOneGroup(g);
+	
+		GroupVo g2 = groupBookIf.selectOneGroup(g);
 		int num = g2.getGroup_id();
 		
 		GroupVo oneGroup = new GroupVo();
 		oneGroup.setGroup_id(Integer.parseInt(groupId));
-		oneGroup.setGroup_name(groupName);
+		oneGroup.setGroup_name(group);
 		oneGroup.setParent_group_id(num);
 		
-		try {
-			addressBookIf.updateGroup(oneGroup);
-			resetTree();
+		try {			
+			groupBookIf.updateGroup(oneGroup);
+			treeReset();
 			textFieldReset();
-			
-		} catch (Exception ex) {
-			LOGGER.error(ex.getMessage(), ex);
 		}
+		catch (Exception ex) {
+			LOGGER.debug(ex.toString());
+		}
+	}
+	
+	public void jButton_Reset_actionPerformed(ActionEvent e) {
+		textFieldReset();
 	}
 	
 }
@@ -367,14 +353,14 @@ class TestPanel_jTree_Result_MouseAdapter extends MouseAdapter {
 		adaptee.jTree_Result_mouseReleased(e);
 	}
 }
-	
+
 class TestPanel_jButton_Save_ActionListener implements ActionListener {
-	private TestPanel adaptee;
+	private TestPanel  adaptee;	
 	
 	public TestPanel_jButton_Save_ActionListener(TestPanel adaptee) {
 		this.adaptee = adaptee;
 	}
-
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		adaptee.jButton_Save_actionPerformed(e);
@@ -382,29 +368,40 @@ class TestPanel_jButton_Save_ActionListener implements ActionListener {
 }
 
 class TestPanel_jButton_Delete_ActionListener implements ActionListener {
-	private TestPanel adaptee;
+	private TestPanel  adaptee;	
 	
 	public TestPanel_jButton_Delete_ActionListener(TestPanel adaptee) {
 		this.adaptee = adaptee;
 	}
-
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		adaptee.jButton_Delete_actionPerformed(e);
 	}
-	
 }
 
 class TestPanel_jButton_Update_ActionListener implements ActionListener {
-	private TestPanel adaptee;
+	private TestPanel  adaptee;	
 	
 	public TestPanel_jButton_Update_ActionListener(TestPanel adaptee) {
 		this.adaptee = adaptee;
 	}
-
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		adaptee.jButton_Update_Performed(e);		
+		adaptee.jButton_Update_actionPerformed(e);
 	}
 }
 
+class TestPanel_jButton_Reset_ActionListener implements ActionListener {
+	private TestPanel  adaptee;	
+	
+	public TestPanel_jButton_Reset_ActionListener(TestPanel adaptee) {
+		this.adaptee = adaptee;
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		adaptee.jButton_Reset_actionPerformed(e);
+	}
+}

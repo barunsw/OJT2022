@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+  <properties resource = "db.properties"/>
+<!-- 카멜 표기법 설정 매핑 -->
+  <settings>
+  	<setting name="mapUnderscoreToCamelCase" value="true" />
+  </settings>
+<!-- DB 환경을 위한 설정 -->
+  <environments default="development">
+    <environment id="development">
+      <transactionManager type="JDBC"/>
+      <dataSource type="POOLED">
+        <property name="driver" value="${driver}"/>
+        <property name="url" value="${url}"/>
+        <property name="username" value="${username}"/>
+        <property name="password" value="${password}"/>
+      </dataSource>
+    </environment>
+  </environments>
+ <!-- sql 파일의 정보를 설정할 때 사용. 파일이 많으면 **로 관련된 mapper를 다 읽음 -->
+  <mappers>
+    <mapper resource="com/barunsw/ojt/jmlee/day16/SqlQuery.xml"/>
+  </mappers>
+</configuration>
